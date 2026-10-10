@@ -18,6 +18,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::connection('queue_db')->dropIfExists('cache_locks');
+        Schema::connection('queue_db')->dropIfExists('cache');
+
         Schema::connection('queue_db')->create('cache', function (Blueprint $table) {
             $table->string('key')->primary();
             $table->mediumText('value');
@@ -36,7 +39,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('queue_db')->dropIfExists('cache');
         Schema::connection('queue_db')->dropIfExists('cache_locks');
+        Schema::connection('queue_db')->dropIfExists('cache');
     }
 };

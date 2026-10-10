@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use Illuminate\Console\Events\CommandStarting;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
 
         $this->ensureSqliteDatabasesExist();
+        $this->handleDatabaseWipeEvents();
     }
 
     /**
@@ -47,5 +50,28 @@ class AppServiceProvider extends ServiceProvider
                 }
             }
         }
+    }
+
+    /**
+     * Cleanly wipe secondary and primary SQLite databases during migrate:fresh or db:wipe.
+     */
+    protected function handleDatabaseWipeEvents(): void
+    {
+        Event::listen(CommandStarting::class, function (CommandStarting $event) {
+            if (in_array($event->command, ['migrate:fresh', 'db:wipe'])) {
+                DB::purge('sqlite');
+                DB::purge('queue_db');
+
+                foreach (['sqlite', 'queue_db'] as $conn) {
+                    $path = config("database.connections.{$conn}.database");
+                    if ($path && file_exists($path)) {
+                        @unlink($path);
+                        @unlink("{$path}-wal");
+                        @unlink("{$path}-shm");
+                        @touch($path);
+                    }
+                }
+            }
+        });
     }
 }

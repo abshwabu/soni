@@ -18,6 +18,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::connection('queue_db')->dropIfExists('failed_jobs');
+        Schema::connection('queue_db')->dropIfExists('job_batches');
+        Schema::connection('queue_db')->dropIfExists('jobs');
+
         Schema::connection('queue_db')->create('jobs', function (Blueprint $table) {
             $table->id();
             $table->string('queue')->index();
@@ -57,8 +61,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('queue_db')->dropIfExists('jobs');
-        Schema::connection('queue_db')->dropIfExists('job_batches');
         Schema::connection('queue_db')->dropIfExists('failed_jobs');
+        Schema::connection('queue_db')->dropIfExists('job_batches');
+        Schema::connection('queue_db')->dropIfExists('jobs');
     }
 };

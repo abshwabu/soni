@@ -18,6 +18,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::connection('queue_db')->dropIfExists('sessions');
+
         Schema::connection('queue_db')->create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();

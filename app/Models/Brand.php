@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
+
+class Brand extends Model implements HasMedia
+{
+    /** @use HasFactory<\Database\Factories\BrandFactory> */
+    use HasFactory, HasSlug, InteractsWithMedia;
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'is_featured',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_featured' => 'boolean',
+        ];
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('logo')
+            ->singleFile();
+    }
+
+    public function registerMediaConversions(?Media $media = null): void
+    {
+        $this->addMediaConversion('webp')
+            ->format('webp')
+            ->width(300)
+            ->height(300)
+            ->nonQueued();
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function scopeFeatured(Builder $query): Builder
+    {
+        return $query->where('is_featured', true);
+    }
+
+    public function getLogoUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('logo', 'webp') ?: $this->getFirstMediaUrl('logo');
+    }
+}
