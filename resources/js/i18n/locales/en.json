@@ -1,0 +1,24 @@
+{
+  "store": {
+    "name": "Soni Perfume",
+    "tagline": "Curated Luxury & Everyday Scents in Addis Ababa"
+  },
+  "nav": {
+    "home": "Home",
+    "catalog": "Perfumes",
+    "cart": "Cart",
+    "contact": "Contact"
+  },
+  "cart": {
+    "title": "Your Order",
+    "empty": "Your cart is empty",
+    "checkout": "Order via Telegram",
+    "subtotal": "Subtotal",
+    "currency": "ETB"
+  },
+  "common": {
+    "order_now": "Order Now",
+    "view_details": "View Details",
+    "currency": "ETB"
+  }
+}
