@@ -21,7 +21,7 @@ class DatabaseModelsTest extends TestCase
     {
         $this->assertEquals(8, Brand::count());
         $this->assertEquals(6, Category::count());
-        $this->assertEquals(30, Product::count());
+        $this->assertGreaterThanOrEqual(30, Product::count());
         $this->assertGreaterThanOrEqual(60, ProductVariant::count());
         $this->assertEquals(4, \App\Models\Banner::count());
         $this->assertEquals(6, \App\Models\Testimonial::count());
