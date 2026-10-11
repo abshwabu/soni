@@ -30,38 +30,59 @@ return [
     */
 
     'connections' => [
+        ...($resolveSqlite = function () {
+            $resolve = function (?string $database, string $defaultFile): string {
+                if ($database === ':memory:') {
+                    return ':memory:';
+                }
 
-        'sqlite' => [
-            'driver' => 'sqlite',
-            'url' => env('DB_URL'),
-            'database' => env('DB_DATABASE')
-                ? (in_array(env('DB_DATABASE'), [':memory:']) || str_starts_with(env('DB_DATABASE'), '/')
-                    ? env('DB_DATABASE')
-                    : (file_exists(database_path(env('DB_DATABASE'))) ? database_path(env('DB_DATABASE')) : base_path(env('DB_DATABASE'))))
-                : database_path('database.sqlite'),
-            'prefix' => '',
-            'foreign_key_constraints' => true,
-            'busy_timeout' => 5000,
-            'journal_mode' => 'wal',
-            'synchronous' => 'normal',
-            'transaction_mode' => 'IMMEDIATE',
-        ],
+                if (! $database) {
+                    return database_path($defaultFile);
+                }
 
-        'queue_db' => [
-            'driver' => 'sqlite',
-            'url' => env('QUEUE_DB_URL'),
-            'database' => env('QUEUE_DB_DATABASE')
-                ? (in_array(env('QUEUE_DB_DATABASE'), [':memory:']) || str_starts_with(env('QUEUE_DB_DATABASE'), '/')
-                    ? env('QUEUE_DB_DATABASE')
-                    : (file_exists(database_path(env('QUEUE_DB_DATABASE'))) ? database_path(env('QUEUE_DB_DATABASE')) : base_path(env('QUEUE_DB_DATABASE'))))
-                : database_path('queue.sqlite'),
-            'prefix' => '',
-            'foreign_key_constraints' => true,
-            'busy_timeout' => 5000,
-            'journal_mode' => 'wal',
-            'synchronous' => 'normal',
-            'transaction_mode' => 'IMMEDIATE',
-        ],
+                // If path is relative (e.g. database/database.sqlite or database.sqlite)
+                if (! str_starts_with($database, '/') && ! str_starts_with($database, '\\') && ! preg_match('/^[A-Za-z]:/', $database)) {
+                    return file_exists(database_path($database))
+                        ? database_path($database)
+                        : base_path($database);
+                }
+
+                // If absolute path exists or its parent directory exists on this system
+                if (file_exists($database) || is_dir(dirname($database))) {
+                    return $database;
+                }
+
+                // Absolute path points to another machine/user directory that does not exist here.
+                // Gracefully fall back to local project database path.
+                return database_path($defaultFile);
+            };
+
+            return [
+                'sqlite' => [
+                    'driver' => 'sqlite',
+                    'url' => env('DB_URL'),
+                    'database' => $resolve(env('DB_DATABASE'), 'database.sqlite'),
+                    'prefix' => '',
+                    'foreign_key_constraints' => true,
+                    'busy_timeout' => 5000,
+                    'journal_mode' => 'wal',
+                    'synchronous' => 'normal',
+                    'transaction_mode' => 'IMMEDIATE',
+                ],
+
+                'queue_db' => [
+                    'driver' => 'sqlite',
+                    'url' => env('QUEUE_DB_URL'),
+                    'database' => $resolve(env('QUEUE_DB_DATABASE'), 'queue.sqlite'),
+                    'prefix' => '',
+                    'foreign_key_constraints' => true,
+                    'busy_timeout' => 5000,
+                    'journal_mode' => 'wal',
+                    'synchronous' => 'normal',
+                    'transaction_mode' => 'IMMEDIATE',
+                ],
+            ];
+        })(),
 
         'mysql' => [
             'driver' => 'mysql',
