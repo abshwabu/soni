@@ -149,15 +149,86 @@ php artisan queue:work database
 
 ---
 
-## Store & Telegram Configuration
+## Store & Telegram Bot Configuration
 
-Add your store details and Telegram bot credentials to `.env`:
+Soni Perfume integrates with Telegram Bot API to notify administrators of new customer orders and stock warnings instantly, and allows order status management directly from Telegram chats via interactive inline buttons.
+
+### 1. Create Bot with @BotFather
+
+1. Open Telegram and search for [@BotFather](https://t.me/BotFather).
+2. Send `/newbot` and follow the prompts:
+   - Name: `Soni Perfume Admin`
+   - Username: `SoniPerfumeBot` (must end in `bot`)
+3. Copy the generated HTTP API Bot Token (e.g. `123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ`).
+
+### 2. Obtain your Admin Chat ID
+
+1. Search for your newly created bot on Telegram and click **Start** (or send `/start`).
+2. The bot responds with your numeric Chat ID:
+   ```text
+   👋 Welcome to Soni Perfume Store Bot!
+   Your Chat ID is: 987654321
+   ```
+3. If using an admin Telegram group, add your bot to the group with admin privileges, send `/start`, and use the group chat ID (typically starting with `-100`).
+
+### 3. Configure Environment Variables
+
+Add your bot token and admin chat ID(s) in `.env`:
 
 ```env
-TELEGRAM_BOT_TOKEN="your_telegram_bot_token"
-TELEGRAM_ADMIN_CHAT_ID="your_telegram_admin_chat_id"
+TELEGRAM_BOT_TOKEN="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ"
+TELEGRAM_ADMIN_CHAT_ID="987654321"
+TELEGRAM_WEBHOOK_SECRET="your-random-secret-key"
+
 STORE_PHONE="+251911000000"
 STORE_WHATSAPP="+251911000000"
 STORE_ADDRESS="Bole Medhanialem, Addis Ababa, Ethiopia"
 STORE_CURRENCY=ETB
 ```
+
+> **Multiple Admins:** You can specify multiple authorized admin IDs separated by commas:
+> `TELEGRAM_ADMIN_CHAT_ID="987654321,123456789,-100987654321"`
+
+### 4. Register Webhook (HTTPS Required)
+
+Telegram Bot API requires an **HTTPS** URL for webhook callbacks:
+
+- **Local Development:** Use a tunnel service like Cloudflare Tunnel or ngrok:
+  ```bash
+  ngrok http 8000
+  php artisan telegram:set-webhook --url=https://your-tunnel.ngrok-free.app
+  ```
+- **Production Server:** Ensure `APP_URL` in `.env` starts with `https://`:
+  ```bash
+  php artisan telegram:set-webhook
+  ```
+
+### 5. Test Bot Connection
+
+Verify your bot credentials and chat ID connectivity:
+
+```bash
+php artisan telegram:test
+```
+
+### 6. Telegram Bot Features & Commands
+
+- **Order Notifications:** Every checkout automatically formats a notification with customer details, delivery location, notes, items snapshot, ETB totals, and timestamp in the `Africa/Addis_Ababa` timezone.
+- **Inline Action Buttons:**
+  - `[✅ Confirm]`: Changes order status to Confirmed.
+  - `[🚚 Out for delivery]`: Changes order status to Out for Delivery.
+  - `[✔️ Completed]`: Changes order status to Completed.
+  - `[❌ Cancel]`: Cancels the order and atomically restores product variant stock in SQLite (guaranteed once only).
+  - `[📞 Call customer]`: Direct phone call URL (`tel:+251...`).
+  - `[💬 WhatsApp]`: Pre-populated WhatsApp chat link with the customer.
+  - `[🔎 Open in Admin]`: Deep link to the order in the Filament admin panel.
+- **Bot Commands for Admins:**
+  - `/start`: Displays the sender's Chat ID and setup instructions.
+  - `/today`: Displays today's order count, total ETB revenue, and status breakdown.
+  - `/pending`: Lists all unfulfilled/new orders with direct links to the admin panel.
+- **Low-Stock Alerts:**
+  - When product variant stock drops below 3 units after an order or manual adjustment, a warning notification is sent to the admin chat (rate-limited/debounced to prevent spam).
+- **Filament Integration:**
+  - Orders in `/admin` display Telegram forwarding status and message ID.
+  - The **"Resend to Telegram"** action dispatches the `SendOrderToTelegram` queued job with retry support.
+

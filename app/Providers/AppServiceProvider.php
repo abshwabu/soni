@@ -27,6 +27,11 @@ class AppServiceProvider extends ServiceProvider
 
         $this->ensureSqliteDatabasesExist();
         $this->handleDatabaseWipeEvents();
+
+        Event::listen(
+            \App\Events\OrderPlaced::class,
+            \App\Listeners\SendOrderNotificationToTelegram::class
+        );
     }
 
     /**

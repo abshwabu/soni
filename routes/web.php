@@ -47,3 +47,7 @@ Route::middleware(['web', 'auth'])->get('/admin/orders/{order}/invoice', functio
     $order->load(['items.product', 'items.productVariant']);
     return view('admin.orders.invoice', compact('order'));
 })->name('admin.orders.invoice');
+
+// Telegram Bot Webhook
+Route::post('/telegram/webhook/{secret}', [\App\Http\Controllers\TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
+

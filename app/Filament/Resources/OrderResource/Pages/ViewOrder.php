@@ -43,20 +43,27 @@ class ViewOrder extends ViewRecord
                 ->color('primary')
                 ->requiresConfirmation()
                 ->modalHeading('Resend Order to Telegram')
-                ->modalDescription('Dispatch order notification to the admin Telegram bot.')
+                ->modalDescription('Dispatch order notification to the admin Telegram bot via queue job.')
                 ->action(function (Order $record): void {
-                    $telegramService = app(TelegramService::class);
-                    $sent = $telegramService->sendOrderNotification($record);
+                    try {
+                        \App\Jobs\SendOrderToTelegram::dispatchSync($record);
+                        $record->refresh();
 
-                    if ($sent) {
+                        if ($record->telegram_sent_at) {
+                            Notification::make()
+                                ->title('Telegram notification sent!')
+                                ->success()
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Telegram dispatch executed (check Telegram token and admin chat ID).')
+                                ->warning()
+                                ->send();
+                        }
+                    } catch (\Throwable $e) {
                         Notification::make()
-                            ->title('Telegram notification sent!')
-                            ->success()
-                            ->send();
-                    } else {
-                        Notification::make()
-                            ->title('Notification processed (Telegram credentials checked).')
-                            ->info()
+                            ->title('Telegram dispatch failed: ' . $e->getMessage())
+                            ->danger()
                             ->send();
                     }
                 }),

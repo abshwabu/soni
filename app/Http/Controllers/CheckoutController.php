@@ -184,6 +184,16 @@ class CheckoutController extends Controller
         // Record rate limit hit only on success
         RateLimiter::hit($rateKey, 3600);
 
+        // Check for variants with low stock (< 3) and notify admin
+        foreach ($cartItems as $cItem) {
+            if (! empty($cItem['variant_id'])) {
+                $variant = \App\Models\ProductVariant::find($cItem['variant_id']);
+                if ($variant && $variant->stock < 3) {
+                    app(\App\Services\TelegramService::class)->notifyLowStock($variant);
+                }
+            }
+        }
+
         // Mark idempotency token as processed
         if ($submittedToken) {
             session()->put('processed_token_' . $submittedToken, $order->order_number);

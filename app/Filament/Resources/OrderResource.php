@@ -91,9 +91,9 @@ class OrderResource extends Resource
                             ->schema([
                                 Infolists\Components\TextEntry::make('telegram_sent_at')
                                     ->label('Telegram Forwarding')
-                                    ->formatStateUsing(fn ($state) => $state ? 'Sent on ' . $state->format('M d, Y - h:i A') : 'Not yet forwarded')
+                                    ->formatStateUsing(fn ($state) => $state ? 'Sent on ' . $state->format('M d, Y - h:i A') : 'Not forwarded / Failed')
                                     ->badge()
-                                    ->color(fn ($state) => $state ? 'success' : 'gray'),
+                                    ->color(fn ($state) => $state ? 'success' : 'danger'),
 
                                 Infolists\Components\TextEntry::make('telegram_message_id')
                                     ->label('Telegram Message ID')
@@ -207,8 +207,8 @@ class OrderResource extends Resource
                 Tables\Columns\IconColumn::make('telegram_sent_at')
                     ->label('Telegram')
                     ->icon(fn ($state) => $state ? 'heroicon-o-check-circle' : 'heroicon-o-x-circle')
-                    ->color(fn ($state) => $state ? 'success' : 'gray')
-                    ->tooltip(fn (Order $record) => $record->telegram_sent_at ? 'Sent at ' . $record->telegram_sent_at->format('M d, H:i') : 'Not yet sent'),
+                    ->color(fn ($state) => $state ? 'success' : 'danger')
+                    ->tooltip(fn (Order $record) => $record->telegram_sent_at ? 'Sent at ' . $record->telegram_sent_at->format('M d, H:i') : 'Not forwarded / Failed'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Date')
@@ -260,20 +260,27 @@ class OrderResource extends Resource
                     ->color('primary')
                     ->requiresConfirmation()
                     ->modalHeading('Resend Order to Telegram')
-                    ->modalDescription('Send order notification to the admin Telegram bot.')
+                    ->modalDescription('Send order notification to the admin Telegram bot via queue job.')
                     ->action(function (Order $record): void {
-                        $telegramService = app(TelegramService::class);
-                        $sent = $telegramService->sendOrderNotification($record);
+                        try {
+                            \App\Jobs\SendOrderToTelegram::dispatchSync($record);
+                            $record->refresh();
 
-                        if ($sent) {
+                            if ($record->telegram_sent_at) {
+                                Notification::make()
+                                    ->title('Telegram notification sent successfully!')
+                                    ->success()
+                                    ->send();
+                            } else {
+                                Notification::make()
+                                    ->title('Telegram dispatch executed (check Telegram token and admin chat ID).')
+                                    ->warning()
+                                    ->send();
+                            }
+                        } catch (\Throwable $e) {
                             Notification::make()
-                                ->title('Telegram notification sent successfully!')
-                                ->success()
-                                ->send();
-                        } else {
-                            Notification::make()
-                                ->title('Notification processed (Telegram credentials checked).')
-                                ->info()
+                                ->title('Telegram dispatch failed: ' . $e->getMessage())
+                                ->danger()
                                 ->send();
                         }
                     }),
