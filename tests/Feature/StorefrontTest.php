@@ -16,10 +16,14 @@ class StorefrontTest extends TestCase
         $response->assertStatus(200);
         $response->assertInertia(fn ($page) => $page
             ->component('Home')
-            ->has('featuredProducts')
-            ->has('categories')
             ->has('banners')
+            ->has('categories')
+            ->has('bestsellers')
+            ->has('newArrivals')
+            ->has('featuredBrands')
+            ->has('giftSets')
             ->has('testimonials')
+            ->has('quizProducts')
             ->has('settings')
             ->has('settings.store_name')
             ->has('cartCount')
@@ -90,4 +94,45 @@ class StorefrontTest extends TestCase
             ->where('cartCount', 0)
         );
     }
+
+    public function test_claim_welcome_offer_endpoint_stores_subscriber_and_sets_session(): void
+    {
+        $testPhone = '+251911998877';
+
+        $response = $this->postJson('/claim-welcome-offer', [
+            'email_or_phone' => $testPhone,
+        ]);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'success' => true,
+            'promo_code' => 'SONIWELCOME',
+        ]);
+
+        $this->assertEquals(true, session('welcome_offer'));
+        $this->assertDatabaseHas('subscribers', [
+            'email_or_phone' => $testPhone,
+            'source' => 'welcome_modal_offer',
+        ]);
+    }
+
+    public function test_telegram_message_includes_welcome_offer_claim_note(): void
+    {
+        $order = \App\Models\Order::first();
+        $this->assertNotNull($order);
+
+        $telegramService = app(\App\Services\TelegramService::class);
+
+        // Without welcome offer
+        session()->forget('welcome_offer');
+        $msgWithout = $telegramService->formatOrderMessage($order);
+        $this->assertStringNotContainsString('First-order offer claimed', $msgWithout);
+
+        // With welcome offer session
+        session(['welcome_offer' => true]);
+        $msgWith = $telegramService->formatOrderMessage($order);
+        $this->assertStringContainsString('First-order offer claimed', $msgWith);
+        $this->assertStringContainsString('sample vial', $msgWith);
+    }
 }
+

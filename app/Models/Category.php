@@ -24,6 +24,10 @@ class Category extends Model implements HasMedia
         'sort_order',
     ];
 
+    protected $appends = [
+        'image_url',
+    ];
+
     protected function casts(): array
     {
         return [

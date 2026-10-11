@@ -44,6 +44,15 @@ class Product extends Model implements HasMedia
         'meta_description',
     ];
 
+    protected $appends = [
+        'price_from',
+        'formatted_price_from',
+        'primary_image_url',
+        'secondary_image_url',
+        'thumbnail_url',
+        'in_stock',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -165,6 +174,16 @@ class Product extends Model implements HasMedia
     public function getPrimaryImageUrlAttribute(): ?string
     {
         return $this->getFirstMediaUrl('images', 'webp') ?: $this->getFirstMediaUrl('images');
+    }
+
+    public function getSecondaryImageUrlAttribute(): ?string
+    {
+        $media = $this->getMedia('images');
+        if ($media->count() > 1) {
+            return $media[1]->getUrl('webp') ?: $media[1]->getUrl();
+        }
+
+        return null;
     }
 
     public function getThumbnailUrlAttribute(): ?string

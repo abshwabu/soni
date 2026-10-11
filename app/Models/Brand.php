@@ -24,6 +24,10 @@ class Brand extends Model implements HasMedia
         'is_featured',
     ];
 
+    protected $appends = [
+        'logo_url',
+    ];
+
     protected function casts(): array
     {
         return [

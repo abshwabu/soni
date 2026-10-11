@@ -3,34 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    $featuredProducts = \App\Models\Product::with(['brand', 'variants', 'media'])
-        ->active()
-        ->featured()
-        ->latest('id')
-        ->limit(8)
-        ->get();
-
-    // If no featured products, get active products
-    if ($featuredProducts->isEmpty()) {
-        $featuredProducts = \App\Models\Product::with(['brand', 'variants', 'media'])
-            ->active()
-            ->latest('id')
-            ->limit(8)
-            ->get();
-    }
-
-    $banners = \App\Models\Banner::active()->ordered()->get();
-    $categories = \App\Models\Category::orderBy('sort_order')->get();
-    $testimonials = \App\Models\Testimonial::active()->latest('id')->limit(4)->get();
-
-    return Inertia::render('Home', [
-        'featuredProducts' => $featuredProducts,
-        'banners' => $banners,
-        'categories' => $categories,
-        'testimonials' => $testimonials,
-    ]);
-})->name('home');
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::post('/claim-welcome-offer', [\App\Http\Controllers\HomeController::class, 'claimWelcomeOffer'])->name('welcome-offer.claim');
 
 Route::post('/subscribers', [\App\Http\Controllers\SubscriberController::class, 'store'])->name('subscribers.store');
 

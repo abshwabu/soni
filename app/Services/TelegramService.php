@@ -76,6 +76,15 @@ class TelegramService
         $notes = $order->notes ? "\n📝 <b>Notes:</b> " . htmlspecialchars($order->notes) : '';
         $altPhone = $order->alt_phone ? " / " . htmlspecialchars($order->alt_phone) : '';
 
+        $welcomeOfferClaimed = session('welcome_offer', false)
+            || str_contains(strtolower($order->notes ?? ''), 'welcome offer')
+            || str_contains(strtolower($order->notes ?? ''), 'sample vial')
+            || str_contains(strtolower($order->notes ?? ''), 'soniwelcome');
+
+        $offerNotice = $welcomeOfferClaimed
+            ? "\n🎁 <b>First-order offer claimed:</b> Include complimentary sample vial!\n"
+            : '';
+
         return <<<TEXT
 🛍️ <b>NEW ORDER: #{$order->order_number}</b>
 ━━━━━━━━━━━━━━━━━━━━
@@ -84,7 +93,7 @@ class TelegramService
 📍 <b>City/Address:</b> {$order->city}, {$order->address}
 🚚 <b>Method:</b> {$deliveryMethod}
 🏷️ <b>Status:</b> {$status}
-{$notes}
+{$offerNotice}{$notes}
 
 📦 <b>Items Ordered:</b>
 {$itemsText}
