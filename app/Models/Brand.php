@@ -77,6 +77,10 @@ class Brand extends Model implements HasMedia
 
     public function getLogoUrlAttribute(): ?string
     {
-        return $this->getFirstMediaUrl('logo', 'webp') ?: $this->getFirstMediaUrl('logo');
+        $url = $this->getFirstMediaUrl('logo', 'webp') ?: $this->getFirstMediaUrl('logo');
+        if ($url && str_contains($url, '/storage/')) {
+            return '/storage/' . explode('/storage/', $url, 2)[1];
+        }
+        return $url ?: '/images/placeholder.svg';
     }
 }

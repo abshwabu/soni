@@ -201,14 +201,22 @@ class Product extends Model implements HasMedia
 
     public function getPrimaryImageUrlAttribute(): ?string
     {
-        return $this->getFirstMediaUrl('images', 'webp') ?: $this->getFirstMediaUrl('images');
+        $url = $this->getFirstMediaUrl('images', 'webp') ?: $this->getFirstMediaUrl('images');
+        if ($url && str_contains($url, '/storage/')) {
+            return '/storage/' . explode('/storage/', $url, 2)[1];
+        }
+        return $url ?: '/images/placeholder.svg';
     }
 
     public function getSecondaryImageUrlAttribute(): ?string
     {
         $media = $this->getMedia('images');
         if ($media->count() > 1) {
-            return $media[1]->getUrl('webp') ?: $media[1]->getUrl();
+            $url = $media[1]->getUrl('webp') ?: $media[1]->getUrl();
+            if ($url && str_contains($url, '/storage/')) {
+                return '/storage/' . explode('/storage/', $url, 2)[1];
+            }
+            return $url;
         }
 
         return null;
@@ -216,6 +224,10 @@ class Product extends Model implements HasMedia
 
     public function getThumbnailUrlAttribute(): ?string
     {
-        return $this->getFirstMediaUrl('images', 'thumb') ?: $this->primary_image_url;
+        $url = $this->getFirstMediaUrl('images', 'thumb') ?: $this->primary_image_url;
+        if ($url && str_contains($url, '/storage/')) {
+            return '/storage/' . explode('/storage/', $url, 2)[1];
+        }
+        return $url ?: '/images/placeholder.svg';
     }
 }

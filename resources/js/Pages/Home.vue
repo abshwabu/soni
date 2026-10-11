@@ -77,9 +77,16 @@ const bannerSlides = computed(() => {
         if (url.startsWith('/catalog')) {
             url = url.replace(/^\/catalog/, '/shop');
         }
+
+        let imageUrl = banner.image_url;
+        if (imageUrl && imageUrl.includes('/storage/')) {
+            imageUrl = '/storage/' + imageUrl.split('/storage/')[1];
+        }
+
         return {
             ...banner,
             button_url: url,
+            image_url: imageUrl || '/images/placeholder.svg',
         };
     });
 });
@@ -400,6 +407,7 @@ const jsonLdSchema = computed(() => {
                             :alt="banner.title"
                             class="w-full h-full object-cover object-center scale-100 transition-transform duration-10000 ease-out"
                             :loading="index === 0 ? 'eager' : 'lazy'"
+                            @error="(e) => e.target.src = '/images/placeholder.svg'"
                         >
                         <!-- Dual gradient overlay for readability -->
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-charcoal via-brand-charcoal/60 to-black/30" />

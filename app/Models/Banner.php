@@ -62,6 +62,10 @@ class Banner extends Model implements HasMedia
 
     public function getImageUrlAttribute(): ?string
     {
-        return $this->getFirstMediaUrl('image', 'webp') ?: $this->getFirstMediaUrl('image');
+        $url = $this->getFirstMediaUrl('image', 'webp') ?: $this->getFirstMediaUrl('image');
+        if ($url && str_contains($url, '/storage/')) {
+            return '/storage/' . explode('/storage/', $url, 2)[1];
+        }
+        return $url ?: '/images/placeholder.svg';
     }
 }

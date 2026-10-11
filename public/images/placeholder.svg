@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1C1917" />
+      <stop offset="50%" stop-color="#292524" />
+      <stop offset="100%" stop-color="#0C0A09" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#DFBF86" />
+      <stop offset="50%" stop-color="#B08D57" />
+      <stop offset="100%" stop-color="#8C6D3B" />
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#B08D57" stop-opacity="0.18" />
+      <stop offset="100%" stop-color="#B08D57" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="100%" height="100%" fill="url(#bg)" />
+  <circle cx="600" cy="400" r="350" fill="url(#glow)" />
+
+  <!-- Outer frame -->
+  <rect x="40" y="40" width="1120" height="720" fill="none" stroke="url(#gold)" stroke-width="1.5" stroke-opacity="0.4" />
+  <rect x="52" y="52" width="1096" height="696" fill="none" stroke="url(#gold)" stroke-width="0.5" stroke-opacity="0.2" />
+
+  <!-- Perfume Bottle Silhouette -->
+  <g transform="translate(600, 360)">
+    <!-- Sprayer / Cap -->
+    <rect x="-35" y="-170" width="70" height="45" rx="3" fill="url(#gold)" />
+    <!-- Atomizer Neck -->
+    <rect x="-18" y="-125" width="36" height="25" fill="#57534E" />
+    <!-- Bottle Shoulder -->
+    <path d="M -90,-100 L 90,-100 L 120,-60 L 120,130 L -120,130 L -120,-60 Z" fill="none" stroke="url(#gold)" stroke-width="3" />
+    <!-- Inner Liquid Level -->
+    <path d="M -110,-40 L 110,-40 L 110,120 L -110,120 Z" fill="url(#gold)" fill-opacity="0.12" />
+    <!-- Facet highlights -->
+    <line x1="-70" y1="-50" x2="-70" y2="110" stroke="url(#gold)" stroke-width="1" stroke-opacity="0.35" />
+    <line x1="70" y1="-50" x2="70" y2="110" stroke="url(#gold)" stroke-width="1" stroke-opacity="0.35" />
+
+    <!-- Label on bottle -->
+    <rect x="-65" y="-15" width="130" height="65" fill="#1C1917" stroke="url(#gold)" stroke-width="1" stroke-opacity="0.6" rx="2" />
+    <text x="0" y="12" font-family="Georgia, serif" font-size="16" fill="url(#gold)" letter-spacing="4" text-anchor="middle" font-weight="normal">SONI</text>
+    <text x="0" y="32" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="9" fill="#A8A29E" letter-spacing="3" text-anchor="middle">PARFUM</text>
+  </g>
+
+  <!-- Typography -->
+  <text x="600" y="570" font-family="Georgia, serif" font-size="28" fill="#F5F5F4" letter-spacing="6" text-anchor="middle" font-weight="300">SONI PERFUME</text>
+  <text x="600" y="605" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="12" fill="#B08D57" letter-spacing="5" text-anchor="middle">HAUTE PARFUMERIE • ADDIS ABABA</text>
+</svg>
