@@ -52,8 +52,7 @@ class HandleInertiaRequests extends Middleware
             'store_currency' => env('STORE_CURRENCY', 'ETB'),
         ], $dbSettings);
 
-        $cart = $request->session()->get('cart', []);
-        $cartCount = (int) collect($cart)->sum('quantity');
+        $cartService = app(\App\Services\CartService::class);
 
         return [
             ...parent::share($request),
@@ -61,7 +60,8 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'settings' => $settings,
-            'cartCount' => $cartCount,
+            'cartCount' => fn () => $cartService->count(),
+            'miniCart' => fn () => $cartService->toArray(),
             'categoriesNav' => fn () => Category::orderBy('sort_order')
                 ->select('id', 'name', 'slug')
                 ->get(),

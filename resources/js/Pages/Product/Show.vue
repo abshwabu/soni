@@ -115,6 +115,9 @@ const addToCart = () => {
         onSuccess: () => {
             isAddingToCart.value = false;
             success(`Added ${quantity.value} × ${props.product.name} (${selectedVariant.value.size_ml}ml) to cart!`);
+            if (typeof window !== 'undefined') {
+                window.dispatchEvent(new CustomEvent('open-mini-cart'));
+            }
         },
         onError: () => {
             isAddingToCart.value = false;

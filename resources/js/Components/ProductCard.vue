@@ -108,6 +108,9 @@ const executeAddToCart = (variantId) => {
                 isAdding.value = false;
                 showQuickSelect.value = false;
                 success(`Added ${props.product.name} to your bag.`);
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('open-mini-cart'));
+                }
             },
             onError: () => {
                 isAdding.value = false;

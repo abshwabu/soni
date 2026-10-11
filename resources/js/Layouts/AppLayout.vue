@@ -1,11 +1,12 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import Drawer from '../Components/Drawer.vue';
 import Modal from '../Components/Modal.vue';
 import Toast from '../Components/Toast.vue';
 import Button from '../Components/Button.vue';
+import MiniCartDrawer from '../Components/MiniCartDrawer.vue';
 import { useToast } from '../Composables/useToast';
 
 const page = usePage();
@@ -19,11 +20,24 @@ const brandsNav = computed(() => page.props.brandsNav || []);
 const showAnnouncement = ref(true);
 const mobileMenuOpen = ref(false);
 const searchOpen = ref(false);
+const miniCartOpen = ref(false);
 const searchQuery = ref('');
 const isSearching = ref(false);
 const searchSuggestions = ref({ products: [], brands: [], total: 0 });
 const floatingChatOpen = ref(false);
 let searchDebounceTimer = null;
+
+const handleOpenMiniCart = () => {
+    miniCartOpen.value = true;
+};
+
+onMounted(() => {
+    window.addEventListener('open-mini-cart', handleOpenMiniCart);
+});
+
+onUnmounted(() => {
+    window.removeEventListener('open-mini-cart', handleOpenMiniCart);
+});
 
 watch(searchQuery, (newVal) => {
     const q = (newVal || '').trim();
@@ -358,10 +372,11 @@ const phoneUrl = computed(() => {
                         </button>
 
                         <!-- Live Cart / Bag Button -->
-                        <Link
-                            href="/cart"
+                        <button
+                            type="button"
                             class="relative p-2 text-brand-charcoal hover:text-brand-gold transition-colors flex items-center gap-2 group focus:outline-none"
                             aria-label="View shopping bag"
+                            @click="miniCartOpen = true"
                         >
                             <div class="relative">
                                 <svg
@@ -390,11 +405,17 @@ const phoneUrl = computed(() => {
                             <span class="hidden sm:inline text-xs uppercase tracking-wider font-medium text-brand-charcoal">
                                 Bag
                             </span>
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </div>
         </header>
+
+        <!-- Mini Cart Drawer -->
+        <MiniCartDrawer
+            :show="miniCartOpen"
+            @close="miniCartOpen = false"
+        />
 
         <!-- 3. Mobile Slide-In Navigation Drawer -->
         <Drawer
@@ -897,9 +918,10 @@ const phoneUrl = computed(() => {
                 <span>Search</span>
             </button>
 
-            <Link
-                href="/cart"
-                class="flex flex-col items-center py-1 px-3 text-[10px] uppercase tracking-wider font-sans font-medium text-brand-charcoal hover:text-brand-gold transition-colors relative"
+            <button
+                type="button"
+                class="flex flex-col items-center py-1 px-3 text-[10px] uppercase tracking-wider font-sans font-medium text-brand-charcoal hover:text-brand-gold transition-colors relative focus:outline-none"
+                @click="miniCartOpen = true"
             >
                 <div class="relative">
                     <svg
@@ -924,7 +946,7 @@ const phoneUrl = computed(() => {
                     </span>
                 </div>
                 <span>Bag</span>
-            </Link>
+            </button>
         </nav>
 
         <!-- 7. Comprehensive Luxury Store Footer -->
