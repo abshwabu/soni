@@ -45,7 +45,7 @@ class TelegramWebhookController extends Controller
     /**
      * Handle incoming callback queries from inline keyboard buttons.
      */
-    protected function handleCallbackQuery(array $callbackQuery, TelegramService $telegramService): JsonResponse
+    public function handleCallbackQuery(array $callbackQuery, TelegramService $telegramService): JsonResponse
     {
         $callbackQueryId = (string) ($callbackQuery['id'] ?? '');
         $fromId = $callbackQuery['from']['id'] ?? null;
@@ -121,7 +121,7 @@ class TelegramWebhookController extends Controller
     /**
      * Handle incoming bot commands (/start, /today, /pending).
      */
-    protected function handleMessage(array $message, TelegramService $telegramService): JsonResponse
+    public function handleMessage(array $message, TelegramService $telegramService): JsonResponse
     {
         $chatId = $message['chat']['id'] ?? null;
         $fromId = $message['from']['id'] ?? null;

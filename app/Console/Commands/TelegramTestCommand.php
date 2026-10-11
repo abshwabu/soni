@@ -54,13 +54,16 @@ Your Telegram bot integration is active and operating correctly!
 You will receive order notifications directly here.
 TEXT;
 
-        $keyboard = [
-            'inline_keyboard' => [
-                [
-                    ['text' => '🛍 Visit Storefront', 'url' => $appUrl],
+        $keyboard = [];
+        if (str_starts_with($appUrl, 'https://') && ! str_contains($appUrl, 'localhost') && ! str_contains($appUrl, '127.0.0.1')) {
+            $keyboard = [
+                'inline_keyboard' => [
+                    [
+                        ['text' => '🛍 Visit Storefront', 'url' => $appUrl],
+                    ],
                 ],
-            ],
-        ];
+            ];
+        }
 
         $allOk = true;
 

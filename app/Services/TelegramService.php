@@ -93,7 +93,7 @@ class TelegramService
     public function sendMessage(
         string|int $chatId,
         string $text,
-        array $replyMarkup = [],
+        ?array $replyMarkup = [],
         string $parseMode = 'HTML'
     ): ?array {
         if (empty($this->botToken)) {
@@ -117,6 +117,16 @@ class TelegramService
 
             if ($response->successful()) {
                 return $response->json();
+            }
+
+            // If Telegram rejected due to an inline keyboard URL, retry without reply_markup so message is delivered
+            if (isset($payload['reply_markup'])) {
+                Log::warning('Telegram sendMessage rejected markup: ' . $this->sanitizeLog($response->body()) . '. Retrying without markup...');
+                unset($payload['reply_markup']);
+                $retry = Http::timeout(10)->post("{$this->getApiBaseUrl()}/sendMessage", $payload);
+                if ($retry->successful()) {
+                    return $retry->json();
+                }
             }
 
             Log::error('Telegram sendMessage failed: ' . $this->sanitizeLog($response->body()), ['payload' => $payload]);
@@ -286,6 +296,29 @@ class TelegramService
             return $response->successful() ? $response->json() : null;
         } catch (\Throwable $e) {
             Log::error('Telegram getWebhookInfo exception: ' . $this->sanitizeLog($e->getMessage()));
+            return null;
+        }
+    }
+
+    /**
+     * Fetch pending updates from Telegram (long polling).
+     */
+    public function getUpdates(int $offset = 0, int $limit = 100, int $timeout = 0): ?array
+    {
+        if (empty($this->botToken)) {
+            return null;
+        }
+
+        try {
+            $response = Http::timeout($timeout + 5)->get("{$this->getApiBaseUrl()}/getUpdates", [
+                'offset' => $offset,
+                'limit' => $limit,
+                'timeout' => $timeout,
+            ]);
+
+            return $response->successful() ? $response->json() : null;
+        } catch (\Throwable $e) {
+            Log::error('Telegram getUpdates exception: ' . $this->sanitizeLog($e->getMessage()));
             return null;
         }
     }

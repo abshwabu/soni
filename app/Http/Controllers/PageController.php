@@ -134,8 +134,7 @@ TEXT;
             $replyMarkup = [
                 'inline_keyboard' => [
                     [
-                        ['text' => '📞 Call Sender', 'url' => "tel:{$validated['phone']}"],
-                        ['text' => '💬 WhatsApp', 'url' => "https://wa.me/{$cleanPhone}?text=" . urlencode("Hello {$validated['name']}, regarding your message to Soni Perfume:")],
+                        ['text' => '💬 Chat on WhatsApp', 'url' => "https://wa.me/{$cleanPhone}?text=" . urlencode("Hello {$validated['name']}, regarding your message to Soni Perfume:")],
                     ],
                 ],
             ];
