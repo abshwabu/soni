@@ -38,12 +38,12 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-Configure absolute SQLite paths in `.env`:
+Configure SQLite paths in `.env` (relative to the project root, or absolute):
 
 ```env
 DB_CONNECTION=sqlite
-DB_DATABASE=/path/to/project/database/database.sqlite
-QUEUE_DB_DATABASE=/path/to/project/database/queue.sqlite
+DB_DATABASE=database/database.sqlite
+QUEUE_DB_DATABASE=database/queue.sqlite
 DB_CACHE_CONNECTION=queue_db
 DB_CACHE_LOCK_CONNECTION=queue_db
 DB_QUEUE_CONNECTION=queue_db
@@ -54,11 +54,7 @@ SESSION_DRIVER=database
 CACHE_STORE=database
 ```
 
-> **Production Path Note:** On production servers (e.g. Ubuntu / Nginx), ensure `DB_DATABASE` and `QUEUE_DB_DATABASE` point to the absolute production path:
-> ```env
-> DB_DATABASE=/var/www/soni-perfume/database/database.sqlite
-> QUEUE_DB_DATABASE=/var/www/soni-perfume/database/queue.sqlite
-> ```
+> **Note:** Relative paths (e.g. `database/database.sqlite`) resolve automatically against the project root. On production servers with symlinked release directories, you may optionally provide an absolute path (e.g. `/var/www/soni-perfume/shared/database/database.sqlite`).
 > Ensure directory permissions allow the web server user (e.g. `www-data`) read and write access to the `database/` directory and sqlite files for WAL journal creation (`.sqlite-wal`, `.sqlite-shm`).
 
 ### 3. Migrations and Database Seeding

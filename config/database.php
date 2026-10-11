@@ -34,7 +34,11 @@ return [
         'sqlite' => [
             'driver' => 'sqlite',
             'url' => env('DB_URL'),
-            'database' => env('DB_DATABASE', database_path('database.sqlite')),
+            'database' => env('DB_DATABASE')
+                ? (in_array(env('DB_DATABASE'), [':memory:']) || str_starts_with(env('DB_DATABASE'), '/')
+                    ? env('DB_DATABASE')
+                    : (file_exists(database_path(env('DB_DATABASE'))) ? database_path(env('DB_DATABASE')) : base_path(env('DB_DATABASE'))))
+                : database_path('database.sqlite'),
             'prefix' => '',
             'foreign_key_constraints' => true,
             'busy_timeout' => 5000,
@@ -46,7 +50,11 @@ return [
         'queue_db' => [
             'driver' => 'sqlite',
             'url' => env('QUEUE_DB_URL'),
-            'database' => env('QUEUE_DB_DATABASE', database_path('queue.sqlite')),
+            'database' => env('QUEUE_DB_DATABASE')
+                ? (in_array(env('QUEUE_DB_DATABASE'), [':memory:']) || str_starts_with(env('QUEUE_DB_DATABASE'), '/')
+                    ? env('QUEUE_DB_DATABASE')
+                    : (file_exists(database_path(env('QUEUE_DB_DATABASE'))) ? database_path(env('QUEUE_DB_DATABASE')) : base_path(env('QUEUE_DB_DATABASE'))))
+                : database_path('queue.sqlite'),
             'prefix' => '',
             'foreign_key_constraints' => true,
             'busy_timeout' => 5000,
