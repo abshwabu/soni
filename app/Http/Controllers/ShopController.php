@@ -221,6 +221,9 @@ class ShopController extends Controller
 
         // Sorting
         $sort = (string) $request->input('sort', 'newest');
+        if (in_array($request->input('filter'), ['bestseller', 'bestsellers']) || $sort === 'bestseller') {
+            $sort = 'bestsellers';
+        }
         switch ($sort) {
             case 'bestsellers':
                 $query->orderByDesc('is_bestseller')->latest('id');

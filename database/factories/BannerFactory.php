@@ -18,7 +18,7 @@ class BannerFactory extends Factory
             'title' => fake()->sentence(4),
             'subtitle' => fake()->sentence(8),
             'button_text' => 'Shop Now',
-            'button_url' => '/catalog',
+            'button_url' => '/shop',
             'is_active' => true,
             'sort_order' => fake()->numberBetween(1, 10),
         ];

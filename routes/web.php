@@ -21,6 +21,7 @@ Route::post('/subscribers', [SubscriberController::class, 'store'])
 
 // Shop & Catalog
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/catalog', [ShopController::class, 'index'])->name('catalog.index');
 Route::get('/category/{slug}', [ShopController::class, 'category'])->name('shop.category');
 Route::get('/brand/{slug}', [ShopController::class, 'brand'])->name('shop.brand');
 Route::get('/brands', [BrandController::class, 'index'])->name('brands.index');

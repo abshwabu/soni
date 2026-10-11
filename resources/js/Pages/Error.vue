@@ -56,7 +56,6 @@ const description = computed(() => {
 
                 <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
                     <Button
-                        as="a"
                         href="/"
                         variant="primary"
                         size="md"
@@ -64,7 +63,6 @@ const description = computed(() => {
                         Return to Boutique
                     </Button>
                     <Button
-                        as="a"
                         href="/shop"
                         variant="secondary"
                         size="md"

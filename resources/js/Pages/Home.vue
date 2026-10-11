@@ -59,20 +59,29 @@ const currentSlide = ref(0);
 let slideTimer = null;
 
 const bannerSlides = computed(() => {
-    if (props.banners && props.banners.length > 0) {
-        return props.banners;
-    }
-    // Fallback default slide
-    return [
-        {
-            id: 1,
-            title: 'Curated Scents for the Connoisseur',
-            subtitle: 'Direct from Paris, Italy & Dubai to Addis Ababa.',
-            button_text: 'Explore Collection',
-            button_url: '/shop',
-            image_url: '/images/placeholder.svg',
-        },
-    ];
+    const slides = (props.banners && props.banners.length > 0)
+        ? props.banners
+        : [
+            {
+                id: 1,
+                title: 'Curated Scents for the Connoisseur',
+                subtitle: 'Direct from Paris, Italy & Dubai to Addis Ababa.',
+                button_text: 'Explore Collection',
+                button_url: '/shop',
+                image_url: '/images/placeholder.svg',
+            },
+        ];
+
+    return slides.map((banner) => {
+        let url = banner.button_url || '/shop';
+        if (url.startsWith('/catalog')) {
+            url = url.replace(/^\/catalog/, '/shop');
+        }
+        return {
+            ...banner,
+            button_url: url,
+        };
+    });
 });
 
 const nextSlide = () => {

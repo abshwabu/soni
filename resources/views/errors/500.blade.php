@@ -73,7 +73,7 @@
         <h1>Unexpected Server Error</h1>
         <p>We encountered an unforeseen issue. Our concierge and technical teams have been alerted.</p>
         <div class="actions">
-            <a href="/" class="btn btn-primary">Return to Boutique</a>
+            <a href="/" target="_top" class="btn btn-primary">Return to Boutique</a>
         </div>
     </div>
 </body>

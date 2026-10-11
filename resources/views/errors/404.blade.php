@@ -82,8 +82,8 @@
         <h1>Fragrance Not Found</h1>
         <p>The perfume, page, or boutique collection you are looking for may have been moved or is no longer available.</p>
         <div class="actions">
-            <a href="/" class="btn btn-primary">Return to Boutique</a>
-            <a href="/shop" class="btn btn-secondary">Explore Fragrances</a>
+            <a href="/" target="_top" class="btn btn-primary">Return to Boutique</a>
+            <a href="/shop" target="_top" class="btn btn-secondary">Explore Fragrances</a>
         </div>
     </div>
 </body>

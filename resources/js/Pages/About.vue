@@ -128,7 +128,6 @@ const renderedHtml = computed(() => props.page?.content || defaultContent);
 
                         <div class="pt-4 flex flex-wrap gap-4">
                             <Button
-                                as="a"
                                 href="/shop"
                                 variant="primary"
                                 size="md"
@@ -136,7 +135,6 @@ const renderedHtml = computed(() => props.page?.content || defaultContent);
                                 Explore Fragrance Collection
                             </Button>
                             <Button
-                                as="a"
                                 href="/contact"
                                 variant="secondary"
                                 size="md"

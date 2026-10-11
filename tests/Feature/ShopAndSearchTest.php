@@ -163,4 +163,49 @@ class ShopAndSearchTest extends TestCase
             ->where('filters.in_stock', true)
         );
     }
+
+    public function test_catalog_route_alias_and_bestseller_sorting(): void
+    {
+        $response = $this->get('/catalog');
+        $response->assertStatus(200);
+        $response->assertInertia(fn ($page) => $page->component('Shop/Index'));
+
+        $responseSort = $this->get('/catalog?filter=bestseller');
+        $responseSort->assertStatus(200);
+        $responseSort->assertInertia(fn ($page) => $page
+            ->component('Shop/Index')
+            ->where('filters.sort', 'bestsellers')
+        );
+    }
+
+    public function test_all_banner_urls_resolve_successfully(): void
+    {
+        $banners = \App\Models\Banner::where('is_active', true)->get();
+        $this->assertNotEmpty($banners);
+
+        foreach ($banners as $banner) {
+            $response = $this->get($banner->button_url);
+            $response->assertStatus(200);
+        }
+    }
+
+    public function test_inertia_not_found_returns_inertia_error_component(): void
+    {
+        // 1. Full page visit
+        $response = $this->get('/non-existent-page-url');
+        $response->assertStatus(404);
+        $response->assertInertia(fn ($page) => $page
+            ->component('Error')
+            ->where('status', 404)
+        );
+
+        // 2. Inertia AJAX visit
+        $ajaxResponse = $this->withHeaders(['X-Inertia' => 'true'])
+            ->get('/non-existent-page-url');
+        $ajaxResponse->assertStatus(404);
+        $ajaxResponse->assertHeader('X-Inertia', 'true');
+        $this->assertSame('Error', $ajaxResponse->json('component'));
+        $this->assertSame(404, $ajaxResponse->json('props.status'));
+    }
 }
+
