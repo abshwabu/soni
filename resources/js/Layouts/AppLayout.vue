@@ -1,6 +1,7 @@
 <script setup>
-import { computed, ref } from 'vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { computed, ref, watch } from 'vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import axios from 'axios';
 import Drawer from '../Components/Drawer.vue';
 import Modal from '../Components/Modal.vue';
 import Toast from '../Components/Toast.vue';
@@ -19,7 +20,33 @@ const showAnnouncement = ref(true);
 const mobileMenuOpen = ref(false);
 const searchOpen = ref(false);
 const searchQuery = ref('');
+const isSearching = ref(false);
+const searchSuggestions = ref({ products: [], brands: [], total: 0 });
 const floatingChatOpen = ref(false);
+let searchDebounceTimer = null;
+
+watch(searchQuery, (newVal) => {
+    const q = (newVal || '').trim();
+    if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+
+    if (q.length < 2) {
+        searchSuggestions.value = { products: [], brands: [], total: 0 };
+        isSearching.value = false;
+        return;
+    }
+
+    isSearching.value = true;
+    searchDebounceTimer = setTimeout(async () => {
+        try {
+            const res = await axios.get('/search/suggestions', { params: { q } });
+            searchSuggestions.value = res.data || { products: [], brands: [], total: 0 };
+        } catch (e) {
+            console.error('Failed fetching search suggestions', e);
+        } finally {
+            isSearching.value = false;
+        }
+    }, 250);
+});
 
 // Newsletter subscription form
 const newsletterForm = useForm({
@@ -44,9 +71,19 @@ const submitNewsletter = () => {
 
 const handleSearch = () => {
     if (!searchQuery.value.trim()) return;
+    const q = searchQuery.value.trim();
     searchOpen.value = false;
-    // Redirect to search or shop query
-    window.location.href = `/shop?search=${encodeURIComponent(searchQuery.value.trim())}`;
+    router.visit(`/search?q=${encodeURIComponent(q)}`);
+};
+
+const selectProduct = (slug) => {
+    searchOpen.value = false;
+    router.visit(`/product/${slug}`);
+};
+
+const selectBrand = (slug) => {
+    searchOpen.value = false;
+    router.visit(`/brand/${slug}`);
 };
 
 const whatsappUrl = computed(() => {
@@ -487,7 +524,7 @@ const phoneUrl = computed(() => {
         <Modal
             :show="searchOpen"
             title="Search Fragrances"
-            max-width="xl"
+            max-width="2xl"
             @close="searchOpen = false"
         >
             <form
@@ -498,8 +535,8 @@ const phoneUrl = computed(() => {
                     <input
                         v-model="searchQuery"
                         type="text"
-                        placeholder="Search by perfume name, brand, or note (e.g. Sauvage, Oud, Vanilla)..."
-                        class="w-full pl-11 pr-4 py-3.5 bg-brand-surface border border-brand-border rounded-sm text-sm focus:border-brand-gold focus:ring-1 focus:ring-brand-gold text-brand-charcoal placeholder:text-brand-muted/70"
+                        placeholder="Search by perfume name, brand, or notes (e.g. Sauvage, Oud, Vanilla)..."
+                        class="w-full pl-11 pr-10 py-3.5 bg-brand-surface border border-brand-border rounded-sm text-sm focus:border-brand-gold focus:ring-1 focus:ring-brand-gold text-brand-charcoal placeholder:text-brand-muted/70"
                         autofocus
                     >
                     <svg
@@ -515,34 +552,172 @@ const phoneUrl = computed(() => {
                             d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
                         />
                     </svg>
+
+                    <!-- Loading or Clear button -->
+                    <div class="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center">
+                        <svg
+                            v-if="isSearching"
+                            class="animate-spin h-4 w-4 text-brand-gold"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                class="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4"
+                            />
+                            <path
+                                class="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                        </svg>
+                        <button
+                            v-else-if="searchQuery"
+                            type="button"
+                            class="text-brand-muted hover:text-brand-charcoal p-1"
+                            aria-label="Clear search"
+                            @click="searchQuery = ''; searchSuggestions = { products: [], brands: [], total: 0 };"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
-                <!-- Popular search keywords tags -->
-                <div class="pt-2">
+                <!-- Live Results: Brands Suggestions -->
+                <div
+                    v-if="searchSuggestions.brands && searchSuggestions.brands.length > 0"
+                    class="pt-1"
+                >
+                    <p class="text-[10px] uppercase tracking-widest font-semibold text-brand-muted mb-2">
+                        Matching Brands:
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <button
+                            v-for="b in searchSuggestions.brands"
+                            :key="b.id"
+                            type="button"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-brand-surface border border-brand-border/80 hover:border-brand-gold hover:text-brand-gold text-xs font-medium text-brand-charcoal transition-colors"
+                            @click="selectBrand(b.slug)"
+                        >
+                            <span class="font-serif italic font-semibold">{{ b.name }}</span>
+                            <span class="text-[10px] text-brand-muted font-sans">({{ b.products_count }})</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Results: Product Suggestions Grid -->
+                <div
+                    v-if="searchSuggestions.products && searchSuggestions.products.length > 0"
+                    class="pt-1 space-y-2"
+                >
+                    <div class="flex items-center justify-between text-[10px] uppercase tracking-widest font-semibold text-brand-muted">
+                        <span>Matching Fragrances:</span>
+                        <span>{{ searchSuggestions.total }} found</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-72 overflow-y-auto pr-1">
+                        <button
+                            v-for="p in searchSuggestions.products"
+                            :key="p.id"
+                            type="button"
+                            class="flex items-center gap-3 p-2 rounded-sm border border-brand-border/60 hover:border-brand-gold hover:bg-brand-gold/5 text-left transition-all group"
+                            @click="selectProduct(p.slug)"
+                        >
+                            <div class="w-12 h-12 bg-white rounded-sm shrink-0 overflow-hidden border border-brand-border/50 flex items-center justify-center">
+                                <img
+                                    :src="p.thumbnail_url || '/images/placeholder.svg'"
+                                    :alt="p.name"
+                                    class="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform"
+                                    loading="lazy"
+                                >
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="text-[10px] text-brand-gold font-medium uppercase tracking-wider truncate">
+                                    {{ p.brand_name }}
+                                </p>
+                                <p class="text-xs font-serif font-semibold text-brand-charcoal truncate group-hover:text-brand-gold transition-colors">
+                                    {{ p.name }}
+                                </p>
+                                <div class="flex items-center justify-between gap-1 text-[11px] text-brand-charcoal font-medium mt-0.5">
+                                    <span class="text-brand-muted text-[10px] uppercase">{{ p.concentration }}</span>
+                                    <span>{{ p.formatted_price_from }}</span>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- View All Results CTA -->
+                    <div class="pt-2">
+                        <button
+                            type="button"
+                            class="w-full py-2.5 px-4 text-xs font-medium uppercase tracking-widest bg-brand-charcoal text-brand-bg hover:bg-brand-charcoal/90 rounded-sm flex items-center justify-center gap-2 transition-colors"
+                            @click="handleSearch"
+                        >
+                            <span>View All {{ searchSuggestions.total }} Fragrance Results for "{{ searchQuery }}"</span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Empty State when searching -->
+                <div
+                    v-else-if="!isSearching && searchQuery.trim().length >= 2"
+                    class="py-6 text-center text-sm text-brand-muted"
+                >
+                    <p class="font-serif text-base text-brand-charcoal mb-1">
+                        No fragrances found matching "{{ searchQuery }}"
+                    </p>
+                    <p class="text-xs">
+                        Try searching for keywords like "Oud", "Sauvage", "Vanilla", or "Chanel".
+                    </p>
+                </div>
+
+                <!-- Popular search keywords tags (shown when input is short) -->
+                <div
+                    v-else
+                    class="pt-2"
+                >
                     <p class="text-[11px] uppercase tracking-widest font-semibold text-brand-muted mb-2">
                         Popular Searches:
                     </p>
                     <div class="flex flex-wrap gap-1.5">
                         <button
-                            v-for="tag in ['Oud', 'Dior', 'Vanilla', 'Amber', 'Citrus', 'Men EDP', 'Gift Sets']"
+                            v-for="tag in ['Oud', 'Dior', 'Sauvage', 'Vanilla', 'Amber', 'Citrus', 'Men EDP', 'Gift Sets']"
                             :key="tag"
                             type="button"
                             class="px-2.5 py-1 text-xs bg-brand-surface hover:bg-brand-gold/15 text-brand-charcoal border border-brand-border/80 rounded-sm transition-colors"
-                            @click="searchQuery = tag; handleSearch();"
+                            @click="searchQuery = tag;"
                         >
                             {{ tag }}
                         </button>
                     </div>
-                </div>
 
-                <div class="flex justify-end pt-2">
-                    <Button
-                        type="submit"
-                        variant="primary"
-                        size="md"
-                    >
-                        Search Fragrances
-                    </Button>
+                    <div class="flex justify-end pt-4">
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            size="md"
+                        >
+                            Search Fragrances
+                        </Button>
+                    </div>
                 </div>
             </form>
         </Modal>

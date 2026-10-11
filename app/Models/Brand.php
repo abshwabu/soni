@@ -35,6 +35,13 @@ class Brand extends Model implements HasMedia
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saved(function (Brand $brand) {
+            app(\App\Services\SearchService::class)->indexBrand($brand);
+        });
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()

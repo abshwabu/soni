@@ -24,6 +24,13 @@ class ProductVariant extends Model
         'is_active',
     ];
 
+    protected $appends = [
+        'formatted_price',
+        'formatted_compare_at_price',
+        'label',
+        'in_stock',
+    ];
+
     protected function casts(): array
     {
         return [

@@ -66,6 +66,21 @@ class Product extends Model implements HasMedia
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saved(function (Product $product) {
+            app(\App\Services\SearchService::class)->indexProduct($product);
+        });
+
+        static::deleted(function (Product $product) {
+            app(\App\Services\SearchService::class)->deleteProduct($product->id);
+        });
+
+        static::restored(function (Product $product) {
+            app(\App\Services\SearchService::class)->indexProduct($product);
+        });
+    }
+
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
