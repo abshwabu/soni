@@ -234,7 +234,7 @@ const executeAddToCart = (variantId) => {
                 <!-- Brand Name -->
                 <p
                     v-if="product.brand"
-                    class="text-[11px] uppercase tracking-widest font-sans font-semibold text-brand-gold mb-1 truncate"
+                    class="text-[11px] uppercase tracking-widest font-sans font-semibold text-brand-gold-800 mb-1 truncate"
                 >
                     {{ product.brand.name }}
                 </p>

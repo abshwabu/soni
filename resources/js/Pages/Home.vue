@@ -407,6 +407,7 @@ const jsonLdSchema = computed(() => {
                             :alt="banner.title"
                             class="w-full h-full object-cover object-center scale-100 transition-transform duration-10000 ease-out"
                             :loading="index === 0 ? 'eager' : 'lazy'"
+                            :fetchpriority="index === 0 ? 'high' : 'auto'"
                             @error="(e) => e.target.src = '/images/placeholder.svg'"
                         >
                         <!-- Dual gradient overlay for readability -->
@@ -420,7 +421,7 @@ const jsonLdSchema = computed(() => {
                             <!-- Eyebrow Pill -->
                             <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur-md border border-white/20 rounded-sm">
                                 <span class="w-2 h-2 rounded-full bg-brand-gold" />
-                                <span class="text-[11px] uppercase tracking-widest text-brand-gold font-sans font-semibold">
+                                <span class="text-[11px] uppercase tracking-widest text-brand-gold-300 font-sans font-semibold">
                                     Curated Haute Parfumerie
                                 </span>
                             </div>
@@ -517,11 +518,15 @@ const jsonLdSchema = computed(() => {
                         v-for="(_, idx) in bannerSlides"
                         :key="idx"
                         type="button"
-                        class="h-1.5 transition-all duration-300 rounded-full focus:outline-none"
-                        :class="[currentSlide === idx ? 'w-8 bg-brand-gold' : 'w-2 bg-white/40 hover:bg-white/70']"
+                        class="p-3 inline-flex items-center justify-center focus:outline-none group"
                         :aria-label="`Go to slide ${idx + 1}`"
                         @click="currentSlide = idx"
-                    />
+                    >
+                        <span
+                            class="h-1.5 transition-all duration-300 rounded-full block"
+                            :class="[currentSlide === idx ? 'w-8 bg-brand-gold' : 'w-2 bg-white/40 group-hover:bg-white/70']"
+                        />
+                    </button>
                 </div>
             </div>
         </section>
@@ -550,9 +555,9 @@ const jsonLdSchema = computed(() => {
                             </svg>
                         </div>
                         <div>
-                            <h4 class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
+                            <p class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
                                 {{ $i18n?.locale === 'am' ? '100% ኦሪጅናል' : '100% Authentic' }}
-                            </h4>
+                            </p>
                             <p class="text-[11px] text-brand-muted mt-0.5">
                                 {{ $i18n?.locale === 'am' ? 'ከፓሪስ፣ ጣሊያን እና ዱባይ' : 'Paris, Italy & Dubai batches' }}
                             </p>
@@ -577,9 +582,9 @@ const jsonLdSchema = computed(() => {
                             </svg>
                         </div>
                         <div>
-                            <h4 class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
+                            <p class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
                                 {{ $i18n?.locale === 'am' ? 'በተመሳሳይ ቀን ማድረሻ' : 'Same-Day Delivery' }}
-                            </h4>
+                            </p>
                             <p class="text-[11px] text-brand-muted mt-0.5">
                                 {{ $i18n?.locale === 'am' ? 'በአዲስ አበባ እስከ ደጃፍዎ' : 'Doorstep arrival in Addis' }}
                             </p>
@@ -604,9 +609,9 @@ const jsonLdSchema = computed(() => {
                             </svg>
                         </div>
                         <div>
-                            <h4 class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
+                            <p class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
                                 {{ $i18n?.locale === 'am' ? 'ሲረከቡ ይክፈሉ' : 'Pay On Delivery' }}
-                            </h4>
+                            </p>
                             <p class="text-[11px] text-brand-muted mt-0.5">
                                 {{ $i18n?.locale === 'am' ? 'ሽቶውን አይተው ይክፈሉ' : 'Inspect bottle before payment' }}
                             </p>
@@ -631,9 +636,9 @@ const jsonLdSchema = computed(() => {
                             </svg>
                         </div>
                         <div>
-                            <h4 class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
+                            <p class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
                                 {{ $i18n?.locale === 'am' ? 'የቅንጦት ማሸጊያ' : 'Luxury Packaging' }}
-                            </h4>
+                            </p>
                             <p class="text-[11px] text-brand-muted mt-0.5">
                                 {{ $i18n?.locale === 'am' ? 'ልዩ የስጦታ ሳጥን' : 'Complimentary bespoke box' }}
                             </p>
@@ -735,7 +740,7 @@ const jsonLdSchema = computed(() => {
         <section class="py-14 sm:py-16 border-y border-brand-border/60 bg-brand-surface">
             <div class="container mx-auto px-4 sm:px-6">
                 <div class="text-center mb-8">
-                    <p class="text-xs uppercase tracking-extrawide text-brand-gold font-sans font-semibold">
+                    <p class="text-xs uppercase tracking-extrawide text-brand-gold-800 font-sans font-bold">
                         Prestige Perfumery
                     </p>
                     <h2 class="font-serif text-2xl sm:text-3xl font-normal text-brand-charcoal mt-1">
@@ -782,7 +787,7 @@ const jsonLdSchema = computed(() => {
 
             <div class="container mx-auto px-4 sm:px-6 relative z-10 max-w-4xl">
                 <div class="text-center mb-10 sm:mb-14">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 text-brand-gold rounded-sm text-xs uppercase tracking-widest font-semibold border border-brand-gold/30">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 text-brand-gold-300 rounded-sm text-xs uppercase tracking-widest font-semibold border border-brand-gold/30">
                         ✦ Bespoke Recommendation Engine
                     </span>
                     <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-normal text-white mt-3">
@@ -800,7 +805,7 @@ const jsonLdSchema = computed(() => {
                         v-if="!quizCompleted"
                         class="mb-8"
                     >
-                        <div class="flex items-center justify-between text-xs font-sans uppercase tracking-widest text-brand-gold mb-2">
+                        <div class="flex items-center justify-between text-xs font-sans uppercase tracking-widest text-brand-gold-300 font-semibold mb-2">
                             <span>Question {{ quizStep }} of 4</span>
                             <span>{{ quizStep * 25 }}%</span>
                         </div>
@@ -1141,7 +1146,7 @@ const jsonLdSchema = computed(() => {
                         <p class="font-serif text-base text-brand-charcoal italic leading-snug">
                             "Perfume is the art that makes memory speak."
                         </p>
-                        <p class="text-[10px] uppercase tracking-widest text-brand-gold font-sans font-semibold mt-2">
+                        <p class="text-[10px] uppercase tracking-widest text-brand-gold-800 font-sans font-semibold mt-2">
                             — Soni Perfume Philosophy
                         </p>
                     </div>
@@ -1150,7 +1155,7 @@ const jsonLdSchema = computed(() => {
                 <!-- Right: Editorial Brand Story -->
                 <div class="lg:col-span-6 space-y-6">
                     <div>
-                        <p class="text-xs uppercase tracking-extrawide text-brand-gold font-sans font-semibold mb-2">
+                        <p class="text-xs uppercase tracking-extrawide text-brand-gold-800 font-sans font-semibold mb-2">
                             Our Origins & Commitment
                         </p>
                         <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl font-normal text-brand-charcoal leading-tight">
@@ -1164,7 +1169,7 @@ const jsonLdSchema = computed(() => {
 
                     <div class="grid grid-cols-2 gap-6 pt-2 border-t border-brand-border/60">
                         <div>
-                            <span class="font-serif text-3xl font-normal text-brand-gold block">100%</span>
+                            <span class="font-serif text-3xl font-normal text-brand-gold-800 block">100%</span>
                             <span class="text-xs uppercase tracking-wider text-brand-charcoal font-semibold">Direct Sourcing</span>
                             <p class="text-[11px] text-brand-muted mt-0.5">
                                 Verified batch codes with zero replicas.
@@ -1172,7 +1177,7 @@ const jsonLdSchema = computed(() => {
                         </div>
 
                         <div>
-                            <span class="font-serif text-3xl font-normal text-brand-gold block">Same-Day</span>
+                            <span class="font-serif text-3xl font-normal text-brand-gold-800 block">Same-Day</span>
                             <span class="text-xs uppercase tracking-wider text-brand-charcoal font-semibold">Doorstep Express</span>
                             <p class="text-[11px] text-brand-muted mt-0.5">
                                 Fast hand-delivery across Addis Ababa.
@@ -1250,10 +1255,10 @@ const jsonLdSchema = computed(() => {
                     </p>
 
                     <div class="pt-4 border-t border-brand-border/60">
-                        <h4 class="font-sans font-semibold text-xs uppercase tracking-widest text-brand-charcoal">
+                        <p class="font-sans font-semibold text-xs uppercase tracking-widest text-brand-charcoal">
                             {{ test.name }}
-                        </h4>
-                        <span class="text-[11px] text-brand-gold font-sans">Verified Client • Addis Ababa</span>
+                        </p>
+                        <span class="text-[11px] text-brand-gold-800 font-sans">Verified Client • Addis Ababa</span>
                     </div>
                 </div>
 
@@ -1295,7 +1300,7 @@ const jsonLdSchema = computed(() => {
                     <div class="lg:col-span-5 bg-brand-surface-warm/50 border border-brand-border p-6 sm:p-8 rounded-sm space-y-6 flex flex-col justify-between">
                         <div class="space-y-5">
                             <div>
-                                <span class="text-xs uppercase tracking-widest font-semibold text-brand-gold font-sans">
+                                <span class="text-xs uppercase tracking-widest font-semibold text-brand-gold-800 font-sans">
                                     Flagship Location
                                 </span>
                                 <h3 class="font-serif text-2xl font-normal text-brand-charcoal mt-1">
@@ -1316,7 +1321,7 @@ const jsonLdSchema = computed(() => {
                                     <span class="font-semibold uppercase tracking-wider text-brand-charcoal block">📞 Phone Reservations & Orders</span>
                                     <a
                                         :href="`tel:${$page.props.settings?.store_phone || '+251911234567'}`"
-                                        class="text-brand-gold hover:underline"
+                                        class="text-brand-gold-800 hover:text-brand-gold-900 underline"
                                     >
                                         {{ $page.props.settings?.store_phone || '+251 91 123 4567' }}
                                     </a>
@@ -1363,9 +1368,9 @@ const jsonLdSchema = computed(() => {
                             class="w-full h-full min-h-[350px] flex flex-col items-center justify-center p-8 text-center bg-brand-surface-warm"
                         >
                             <span class="text-4xl text-brand-gold mb-3">📍</span>
-                            <h4 class="font-serif text-2xl font-normal text-brand-charcoal">
+                            <p class="font-serif text-2xl font-normal text-brand-charcoal">
                                 Soni Perfume Boutique
-                            </h4>
+                            </p>
                             <p class="text-xs text-brand-muted max-w-sm mt-1">
                                 {{ $page.props.settings?.store_address || 'Bole, Addis Ababa, Ethiopia' }}
                             </p>
@@ -1373,7 +1378,7 @@ const jsonLdSchema = computed(() => {
                                 :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent($page.props.settings?.store_address || 'Bole, Addis Ababa')}`"
                                 target="_blank"
                                 rel="noopener"
-                                class="mt-4 text-xs font-sans uppercase tracking-widest font-semibold text-brand-gold hover:underline"
+                                class="mt-4 text-xs font-sans uppercase tracking-widest font-semibold text-brand-gold-800 hover:text-brand-gold-900 underline"
                             >
                                 Open in Google Maps →
                             </a>
@@ -1389,7 +1394,7 @@ const jsonLdSchema = computed(() => {
         <section class="py-14 bg-brand-bg border-t border-brand-border/60">
             <div class="container mx-auto px-4 sm:px-6 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
                 <div>
-                    <span class="text-xs uppercase tracking-widest text-brand-gold font-sans font-semibold">
+                    <span class="text-xs uppercase tracking-widest text-brand-gold-800 font-sans font-semibold">
                         Social Feed & Aesthetics
                     </span>
                     <h3 class="font-serif text-2xl font-normal text-brand-charcoal">
@@ -1477,7 +1482,7 @@ const jsonLdSchema = computed(() => {
                     </Button>
                 </form>
 
-                <p class="text-[10px] text-white/40 font-sans tracking-wide">
+                <p class="text-[10px] text-white/75 font-sans tracking-wide">
                     Zero spam. Unsubscribe anytime with a single message.
                 </p>
             </div>
@@ -1503,7 +1508,7 @@ const jsonLdSchema = computed(() => {
                     class="space-y-4"
                 >
                     <div>
-                        <span class="text-[11px] uppercase tracking-extrawide font-semibold text-brand-gold font-sans">
+                        <span class="text-[11px] uppercase tracking-extrawide font-semibold text-brand-gold-800 font-sans">
                             Welcome Exclusive
                         </span>
                         <h3 class="font-serif text-2xl sm:text-3xl font-normal text-brand-charcoal mt-1">

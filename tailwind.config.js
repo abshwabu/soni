@@ -55,7 +55,7 @@ export default {
                         DEFAULT: '#EBD9D0',
                         dark: '#D8BCB0',
                     },
-                    muted: '#78716C',
+                    muted: '#57534E',
                     subtle: '#A8A29E',
                     border: '#E7E0D8',
                     'border-light': '#F0EBE4',

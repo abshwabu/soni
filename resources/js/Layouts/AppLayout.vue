@@ -365,7 +365,7 @@ const phoneUrl = computed(() => {
                             <span class="font-serif text-2xl sm:text-3xl md:text-4xl font-normal tracking-widest text-brand-charcoal uppercase leading-none group-hover:text-brand-gold transition-colors duration-200">
                                 {{ settings.store_name?.split(' ')?.[0] || 'SONI' }}
                             </span>
-                            <span class="text-[9px] md:text-[10px] font-sans font-semibold tracking-extrawide text-brand-gold uppercase mt-0.5">
+                            <span class="text-[9px] md:text-[10px] font-sans font-semibold tracking-extrawide text-brand-gold-800 uppercase mt-0.5">
                                 {{ settings.store_name?.split(' ')?.slice(1)?.join(' ') || 'PERFUME' }}
                             </span>
                         </Link>
@@ -535,7 +535,7 @@ const phoneUrl = computed(() => {
 
                     <!-- Categories list -->
                     <div class="py-2 px-2 border-b border-brand-border/60">
-                        <p class="text-[11px] font-semibold text-brand-gold tracking-extrawide mb-2">
+                        <p class="text-[11px] font-semibold text-brand-gold-800 tracking-extrawide mb-2">
                             {{ $t('nav.categories') }}
                         </p>
                         <div class="grid grid-cols-2 gap-2 text-xs normal-case tracking-normal pl-1">
@@ -1055,7 +1055,7 @@ const phoneUrl = computed(() => {
                             <span class="font-serif text-3xl font-light tracking-widest text-brand-bg uppercase">
                                 {{ settings.store_name?.split(' ')?.[0] || 'SONI' }}
                             </span>
-                            <span class="text-[10px] font-sans font-semibold tracking-extrawide text-brand-gold uppercase">
+                            <span class="text-[10px] font-sans font-semibold tracking-extrawide text-brand-gold-300 uppercase">
                                 {{ settings.store_name?.split(' ')?.slice(1)?.join(' ') || 'PERFUME' }}
                             </span>
                         </Link>
@@ -1066,11 +1066,11 @@ const phoneUrl = computed(() => {
 
                         <div class="space-y-1.5 text-xs text-brand-bg/80 font-sans pt-2">
                             <p class="flex items-center gap-2">
-                                <span class="text-brand-gold font-semibold">📍</span>
+                                <span class="text-brand-gold-300 font-semibold">📍</span>
                                 <span>{{ settings.store_address || 'Bole, Addis Ababa, Ethiopia' }}</span>
                             </p>
                             <p class="flex items-center gap-2">
-                                <span class="text-brand-gold font-semibold">📞</span>
+                                <span class="text-brand-gold-300 font-semibold">📞</span>
                                 <a
                                     :href="phoneUrl"
                                     class="hover:text-brand-gold transition-colors"
@@ -1079,7 +1079,7 @@ const phoneUrl = computed(() => {
                                 </a>
                             </p>
                             <p class="flex items-center gap-2">
-                                <span class="text-brand-gold font-semibold">🕒</span>
+                                <span class="text-brand-gold-300 font-semibold">🕒</span>
                                 <span>{{ settings.opening_hours || 'Mon–Sat: 9am–8pm | Sun: 10am–6pm' }}</span>
                             </p>
                         </div>
@@ -1087,9 +1087,9 @@ const phoneUrl = computed(() => {
 
                     <!-- Col 3: Quick Links -->
                     <div class="space-y-3">
-                        <h4 class="text-xs font-semibold uppercase tracking-widest text-brand-gold font-sans">
+                        <p class="text-xs font-semibold uppercase tracking-widest text-brand-gold-300 font-sans">
                             {{ currentLocale === 'am' ? 'የሽቶ ስብስቦች' : 'Collections' }}
-                        </h4>
+                        </p>
                         <ul class="space-y-2 text-xs font-sans text-brand-bg/70 font-light">
                             <li>
                                 <Link
@@ -1123,9 +1123,9 @@ const phoneUrl = computed(() => {
 
                     <!-- Col 4: Store & Service -->
                     <div class="space-y-3">
-                        <h4 class="text-xs font-semibold uppercase tracking-widest text-brand-gold font-sans">
+                        <p class="text-xs font-semibold uppercase tracking-widest text-brand-gold-300 font-sans">
                             {{ currentLocale === 'am' ? 'መረጃዎች' : 'Information' }}
-                        </h4>
+                        </p>
                         <ul class="space-y-2 text-xs font-sans text-brand-bg/70 font-light">
                             <li>
                                 <Link
@@ -1180,9 +1180,9 @@ const phoneUrl = computed(() => {
 
                     <!-- Col 5: Newsletter Signup -->
                     <div class="space-y-3">
-                        <h4 class="text-xs font-semibold uppercase tracking-widest text-brand-gold font-sans">
+                        <p class="text-xs font-semibold uppercase tracking-widest text-brand-gold-300 font-sans">
                             {{ currentLocale === 'am' ? 'ክበቡን ይቀላቀሉ' : 'Join The Circle' }}
-                        </h4>
+                        </p>
                         <p class="text-xs text-brand-bg/70 font-sans font-light leading-relaxed">
                             {{ currentLocale === 'am' ? 'ለአዳዲስ ሽቶዎች፣ ቅናሾች እና መረጃዎች ይመዝገቡ።' : 'Subscribe for exclusive private arrivals and VIP perfume announcements.' }}
                         </p>

@@ -32,7 +32,7 @@ const sizeClasses = computed(() => {
 
 const variantClasses = computed(() => {
     return {
-        gold: 'bg-brand-gold text-white',
+        gold: 'bg-brand-gold text-brand-dark font-semibold',
         dark: 'bg-brand-charcoal text-brand-bg',
         blush: 'bg-brand-blush text-brand-charcoal',
         outline: 'border border-brand-border text-brand-charcoal bg-brand-surface/90',

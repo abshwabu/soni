@@ -44,7 +44,7 @@ const isCentered = computed(() => props.align === 'center');
             <!-- Eyebrow -->
             <p
                 v-if="eyebrow"
-                class="text-xs uppercase tracking-extrawide text-brand-gold font-sans font-semibold mb-2"
+                class="text-xs uppercase tracking-extrawide text-brand-gold-800 font-sans font-bold mb-2"
             >
                 {{ eyebrow }}
             </p>

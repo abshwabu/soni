@@ -62,11 +62,11 @@ const sizeClasses = computed(() => {
 
 const variantClasses = computed(() => {
     return {
-        primary: 'bg-brand-gold text-white hover:bg-brand-gold-600 active:bg-brand-gold-700 focus:ring-brand-gold/50 shadow-sm',
+        primary: 'bg-brand-gold text-brand-dark font-semibold hover:bg-brand-gold-400 active:bg-brand-gold-600 focus:ring-brand-gold/50 shadow-sm',
         dark: 'bg-brand-charcoal text-brand-bg hover:bg-black active:bg-neutral-900 focus:ring-brand-charcoal/50 shadow-sm',
         secondary: 'bg-brand-blush/60 text-brand-charcoal hover:bg-brand-blush focus:ring-brand-blush',
         outline: 'border border-brand-charcoal text-brand-charcoal hover:bg-brand-charcoal hover:text-brand-bg focus:ring-brand-charcoal/30 bg-transparent',
-        'outline-gold': 'border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white focus:ring-brand-gold/30 bg-transparent',
+        'outline-gold': 'border border-brand-gold-700 text-brand-gold-800 hover:bg-brand-gold hover:text-brand-dark focus:ring-brand-gold/30 bg-transparent',
         ghost: 'bg-transparent text-brand-charcoal hover:bg-brand-gold/10 hover:text-brand-gold focus:ring-brand-gold/20',
         danger: 'bg-rose-700 text-white hover:bg-rose-800 focus:ring-rose-500',
     }[props.variant];

@@ -7,9 +7,13 @@
 
         <title inertia>{{ config('app.name', 'Soni Perfume') }}</title>
 
-        <!-- Preconnect & DNS-Prefetch for Speed -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        @php
+            $heroImage = $page['props']['banners'][0]['image_url'] ?? null;
+        @endphp
+        @if($heroImage)
+            <!-- Preload Largest Contentful Paint (LCP) Hero Image -->
+            <link rel="preload" as="image" href="{{ $heroImage }}" fetchpriority="high">
+        @endif
 
         <!-- Global Structured Data (JSON-LD Organization & LocalBusiness) -->
         <script type="application/ld+json">
