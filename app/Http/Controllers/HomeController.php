@@ -20,88 +20,92 @@ class HomeController extends Controller
      */
     public function index(): Response
     {
-        $banners = Banner::active()->ordered()->get();
+        $homeData = \Illuminate\Support\Facades\Cache::remember('home_page_data', 1800, function () {
+            $banners = Banner::active()->ordered()->get();
 
-        $categories = Category::ordered()
-            ->withCount(['products' => fn ($q) => $q->active()])
-            ->get();
-
-        // Bestsellers with fallback to active products
-        $bestsellers = Product::active()
-            ->bestseller()
-            ->with(['brand', 'variants', 'media'])
-            ->take(8)
-            ->get();
-
-        if ($bestsellers->count() < 4) {
-            $extra = Product::active()
-                ->whereNotIn('id', $bestsellers->pluck('id'))
-                ->with(['brand', 'variants', 'media'])
-                ->take(8 - $bestsellers->count())
+            $categories = Category::ordered()
+                ->withCount(['products' => fn ($q) => $q->active()])
                 ->get();
-            $bestsellers = $bestsellers->concat($extra);
-        }
 
-        // New Arrivals with fallback
-        $newArrivals = Product::active()
-            ->new()
-            ->with(['brand', 'variants', 'media'])
-            ->latest('id')
-            ->take(8)
-            ->get();
+            // Bestsellers with fallback to active products
+            $bestsellers = Product::active()
+                ->bestseller()
+                ->with(['brand', 'variants', 'media'])
+                ->take(8)
+                ->get();
 
-        if ($newArrivals->count() < 4) {
-            $extraNew = Product::active()
-                ->whereNotIn('id', $newArrivals->pluck('id'))
+            if ($bestsellers->count() < 4) {
+                $extra = Product::active()
+                    ->whereNotIn('id', $bestsellers->pluck('id'))
+                    ->with(['brand', 'variants', 'media'])
+                    ->take(8 - $bestsellers->count())
+                    ->get();
+                $bestsellers = $bestsellers->concat($extra);
+            }
+
+            // New Arrivals with fallback
+            $newArrivals = Product::active()
+                ->new()
                 ->with(['brand', 'variants', 'media'])
                 ->latest('id')
-                ->take(8 - $newArrivals->count())
+                ->take(8)
                 ->get();
-            $newArrivals = $newArrivals->concat($extraNew);
-        }
 
-        // Featured Brands
-        $featuredBrands = Brand::featured()
-            ->withCount(['products' => fn ($q) => $q->active()])
-            ->get();
+            if ($newArrivals->count() < 4) {
+                $extraNew = Product::active()
+                    ->whereNotIn('id', $newArrivals->pluck('id'))
+                    ->with(['brand', 'variants', 'media'])
+                    ->latest('id')
+                    ->take(8 - $newArrivals->count())
+                    ->get();
+                $newArrivals = $newArrivals->concat($extraNew);
+            }
 
-        // Gift Sets highlight
-        $giftSets = Product::active()
-            ->whereHas('category', fn ($q) => $q->where('slug', 'gift-sets'))
-            ->with(['brand', 'variants', 'media'])
-            ->take(4)
-            ->get();
+            // Featured Brands
+            $featuredBrands = Brand::featured()
+                ->withCount(['products' => fn ($q) => $q->active()])
+                ->get();
 
-        if ($giftSets->isEmpty()) {
+            // Gift Sets highlight
             $giftSets = Product::active()
+                ->whereHas('category', fn ($q) => $q->where('slug', 'gift-sets'))
                 ->with(['brand', 'variants', 'media'])
                 ->take(4)
                 ->get();
-        }
 
-        // Testimonials
-        $testimonials = Testimonial::active()
-            ->latest('id')
-            ->take(6)
-            ->get();
+            if ($giftSets->isEmpty()) {
+                $giftSets = Product::active()
+                    ->with(['brand', 'variants', 'media'])
+                    ->take(4)
+                    ->get();
+            }
 
-        // Products pool for Scent Finder quiz matching
-        $quizProducts = Product::active()
-            ->with(['brand', 'variants', 'media'])
-            ->take(30)
-            ->get();
+            // Testimonials
+            $testimonials = Testimonial::active()
+                ->latest('id')
+                ->take(6)
+                ->get();
 
-        return Inertia::render('Home', [
-            'banners' => $banners,
-            'categories' => $categories,
-            'bestsellers' => $bestsellers,
-            'featuredProducts' => $bestsellers,
-            'newArrivals' => $newArrivals,
-            'featuredBrands' => $featuredBrands,
-            'giftSets' => $giftSets,
-            'testimonials' => $testimonials,
-            'quizProducts' => $quizProducts,
-        ]);
+            // Products pool for Scent Finder quiz matching
+            $quizProducts = Product::active()
+                ->with(['brand', 'variants', 'media'])
+                ->take(30)
+                ->get();
+
+            return [
+                'banners' => $banners,
+                'categories' => $categories,
+                'bestsellers' => $bestsellers,
+                'featuredProducts' => $bestsellers,
+                'newArrivals' => $newArrivals,
+                'featuredBrands' => $featuredBrands,
+                'giftSets' => $giftSets,
+                'testimonials' => $testimonials,
+                'quizProducts' => $quizProducts,
+            ];
+        });
+
+        return Inertia::render('Home', $homeData);
     }
 
     /**

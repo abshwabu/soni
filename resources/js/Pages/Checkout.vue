@@ -5,6 +5,7 @@ import AppLayout from '../Layouts/AppLayout.vue';
 import Breadcrumbs from '../Components/Breadcrumbs.vue';
 import Button from '../Components/Button.vue';
 import { useToast } from '../Composables/useToast';
+import { useAnalytics } from '../Composables/useAnalytics';
 
 const props = defineProps({
     cart: {
@@ -30,6 +31,14 @@ const props = defineProps({
 });
 
 const { error } = useToast();
+const { trackEvent } = useAnalytics();
+
+onMounted(() => {
+    trackEvent('begin_checkout', {
+        items_count: props.cart?.count,
+        subtotal: props.cart?.subtotal,
+    });
+});
 
 const form = useForm({
     customer_name: '',

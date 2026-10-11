@@ -11,6 +11,9 @@ import Modal from '../Components/Modal.vue';
 import Rating from '../Components/Rating.vue';
 import AppImage from '../Components/AppImage.vue';
 import { useToast } from '../Composables/useToast';
+import { useAnalytics } from '../Composables/useAnalytics';
+
+const { trackEvent } = useAnalytics();
 
 const props = defineProps({
     banners: {
@@ -239,6 +242,9 @@ const claimWelcomeOffer = async () => {
             welcomePromoCode.value = response.data.promo_code || 'SONIWELCOME';
             dismissOfferFor30Days();
             success('Welcome gift claimed! Included with your first order.');
+            trackEvent('welcome_modal_signup', {
+                email_or_phone: welcomeEmailOrPhone.value.trim(),
+            });
         }
     } catch {
         error('Could not claim offer. Please try again.');

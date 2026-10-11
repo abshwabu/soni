@@ -48,4 +48,9 @@ return [
         'currency' => env('STORE_CURRENCY', 'ETB'),
     ],
 
+    'analytics' => [
+        'plausible_domain' => env('PLAUSIBLE_DOMAIN'),
+        'ga4_id' => env('GA4_MEASUREMENT_ID'),
+    ],
+
 ];

@@ -28,6 +28,43 @@ class AppServiceProvider extends ServiceProvider
         $this->ensureSqliteDatabasesExist();
         $this->handleDatabaseWipeEvents();
 
+        // Performance: Prevent N+1 lazy loading outside production
+        \Illuminate\Database\Eloquent\Model::preventLazyLoading(! $this->app->isProduction() && ! $this->app->runningUnitTests());
+
+        // Performance: Slow query monitoring in non-production
+        if (! $this->app->isProduction()) {
+            DB::listen(function ($query) {
+                if ($query->time > 50) {
+                    \Illuminate\Support\Facades\Log::warning("Slow database query detected ({$query->time}ms) on [{$query->connectionName}]: {$query->sql}");
+                }
+            });
+        }
+
+        // Cache invalidation on model changes
+        $clearHome = fn () => \Illuminate\Support\Facades\Cache::forget('home_page_data');
+        $clearNav = function () {
+            \Illuminate\Support\Facades\Cache::forget('nav_categories');
+            \Illuminate\Support\Facades\Cache::forget('nav_brands');
+            \Illuminate\Support\Facades\Cache::forget('home_page_data');
+        };
+        $clearSettings = function () {
+            \Illuminate\Support\Facades\Cache::forget('store_settings');
+            \Illuminate\Support\Facades\Cache::forget('home_page_data');
+        };
+
+        \App\Models\Product::saved($clearHome);
+        \App\Models\Product::deleted($clearHome);
+        \App\Models\Category::saved($clearNav);
+        \App\Models\Category::deleted($clearNav);
+        \App\Models\Brand::saved($clearNav);
+        \App\Models\Brand::deleted($clearNav);
+        \App\Models\Setting::saved($clearSettings);
+        \App\Models\Setting::deleted($clearSettings);
+        \App\Models\Banner::saved($clearHome);
+        \App\Models\Banner::deleted($clearHome);
+        \App\Models\Testimonial::saved($clearHome);
+        \App\Models\Testimonial::deleted($clearHome);
+
         Event::listen(
             \App\Events\OrderPlaced::class,
             \App\Listeners\SendOrderNotificationToTelegram::class

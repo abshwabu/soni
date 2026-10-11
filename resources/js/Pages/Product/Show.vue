@@ -9,6 +9,9 @@ import Rating from '../../Components/Rating.vue';
 import Badge from '../../Components/Badge.vue';
 import Button from '../../Components/Button.vue';
 import { useToast } from '../../Composables/useToast';
+import { useAnalytics } from '../../Composables/useAnalytics';
+
+const { trackEvent } = useAnalytics();
 
 const props = defineProps({
     product: {
@@ -115,6 +118,13 @@ const addToCart = () => {
         onSuccess: () => {
             isAddingToCart.value = false;
             success(`Added ${quantity.value} × ${props.product.name} (${selectedVariant.value.size_ml}ml) to cart!`);
+            trackEvent('add_to_cart', {
+                product_id: props.product.id,
+                product_name: props.product.name,
+                variant_id: selectedVariant.value.id,
+                quantity: quantity.value,
+                price: currentPrice.value,
+            });
             if (typeof window !== 'undefined') {
                 window.dispatchEvent(new CustomEvent('open-mini-cart'));
             }

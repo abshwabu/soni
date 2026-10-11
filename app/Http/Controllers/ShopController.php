@@ -51,7 +51,7 @@ class ShopController extends Controller
     /**
      * Display single product detail page.
      */
-    public function show(string $slug): Response
+    public function show(string $slug): Response|\Illuminate\Http\RedirectResponse
     {
         $product = Product::where('slug', $slug)
             ->active()
@@ -61,7 +61,19 @@ class ShopController extends Controller
                 'variants' => fn ($q) => $q->where('is_active', true)->orderBy('price', 'asc'),
                 'media',
             ])
-            ->firstOrFail();
+            ->first();
+
+        if (! $product) {
+            $redirect = \App\Models\SlugRedirect::where('source_slug', $slug)
+                ->where('model_type', Product::class)
+                ->first();
+
+            if ($redirect) {
+                return redirect()->route('product.show', $redirect->target_slug, 301);
+            }
+
+            abort(404);
+        }
 
         // Related products in same category or brand
         $relatedProducts = Product::active()

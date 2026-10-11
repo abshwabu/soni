@@ -6,6 +6,7 @@ import AppImage from './AppImage.vue';
 import Modal from './Modal.vue';
 import Button from './Button.vue';
 import { useToast } from '../Composables/useToast';
+import { useAnalytics } from '../Composables/useAnalytics';
 
 const props = defineProps({
     product: {
@@ -15,6 +16,7 @@ const props = defineProps({
 });
 
 const { success, error } = useToast();
+const { trackEvent } = useAnalytics();
 const isAdding = ref(false);
 const showQuickSelect = ref(false);
 const selectedVariantId = ref(null);
@@ -108,6 +110,11 @@ const executeAddToCart = (variantId) => {
                 isAdding.value = false;
                 showQuickSelect.value = false;
                 success(`Added ${props.product.name} to your bag.`);
+                trackEvent('add_to_cart', {
+                    product_id: props.product.id,
+                    product_name: props.product.name,
+                    variant_id: variantId,
+                });
                 if (typeof window !== 'undefined') {
                     window.dispatchEvent(new CustomEvent('open-mini-cart'));
                 }

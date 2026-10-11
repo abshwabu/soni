@@ -1,2 +1,21 @@
 User-agent: *
-Disallow:
+Disallow: /admin
+Disallow: /checkout
+Disallow: /cart
+Disallow: /order/*/thank-you
+Disallow: /telegram/
+
+Allow: /
+Allow: /shop
+Allow: /category/
+Allow: /brand/
+Allow: /brands
+Allow: /product/
+Allow: /gifts
+Allow: /about
+Allow: /contact
+Allow: /delivery-returns
+Allow: /privacy
+Allow: /terms
+
+Sitemap: https://soniperfume.com/sitemap.xml

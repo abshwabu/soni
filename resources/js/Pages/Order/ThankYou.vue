@@ -1,8 +1,9 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import AppLayout from '../../Layouts/AppLayout.vue';
 import Button from '../../Components/Button.vue';
+import { useAnalytics } from '../../Composables/useAnalytics';
 
 const props = defineProps({
     order: {
@@ -13,6 +14,16 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
+});
+
+const { trackEvent } = useAnalytics();
+
+onMounted(() => {
+    trackEvent('order_placed', {
+        order_number: props.order.order_number,
+        total: props.order.total,
+        items_count: props.order.items?.length || 0,
+    });
 });
 
 const page = usePage();

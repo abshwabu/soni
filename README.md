@@ -232,3 +232,31 @@ php artisan telegram:test
   - Orders in `/admin` display Telegram forwarding status and message ID.
   - The **"Resend to Telegram"** action dispatches the `SendOrderToTelegram` queued job with retry support.
 
+---
+
+## Content Pages, SEO & Performance
+
+### 1. Store Pages & CMS
+- **`/about`:** The boutique story, core values, authenticity promise, and gallery of store photos.
+- **`/contact`:** Boutique address in Bole Medhanialem, opening hours, phone, WhatsApp, Telegram, embedded map, and direct inquiry form forwarded immediately to the admin Telegram chat.
+- **`/gifts`:** Curated fragrance gift guide (For Him, For Her, Under ETB 3,000, Luxury & Statement, and Boxed Gift Sets) with complimentary gift box packaging notes.
+- **`/delivery-returns`, `/privacy`, `/terms`:** CMS policy pages managed directly from the Filament admin panel under `Content -> Pages` with rich text editing.
+
+### 2. Search Engine Optimization (SEO)
+- **Dynamic Meta & Social Cards:** Comprehensive `<SeoHead>` component on every page providing dynamic title, description, canonical link, OpenGraph, and Twitter Summary Card metadata.
+- **Structured Data (JSON-LD):** Auto-injected Schema.org markup for `Organization`, `LocalBusiness` (Bole Medhanialem address, geo coordinates, opening hours), `Product` (with price in ETB, availability, brand), and `BreadcrumbList`.
+- **Sitemap & Robots:**
+  - Live XML endpoint at `/sitemap.xml` with caching.
+  - Generate static file via artisan command: `php artisan sitemap:generate`.
+  - Configured `public/robots.txt` disallowing checkout, cart, and admin routes.
+- **301 Clean Slug Redirects:** Automatic recording in `slug_redirects` table when a product's slug is updated, redirecting previous URLs via HTTP 301 permanent redirect.
+
+### 3. Performance & SQLite Optimization
+- **N+1 Prevention:** `Model::preventLazyLoading(! app()->isProduction())` enabled to enforce eager loading.
+- **Slow Query Logging:** Automatic warning logs for queries exceeding 50ms in non-production.
+- **Query & Bundle Caching:** Navigation categories, store settings, and home page collections cached with short TTL and automatically invalidated upon model save/delete events.
+- **SQLite Maintenance:** Daily scheduled `PRAGMA optimize;` command (`php artisan db:optimize-sqlite`) keeping SQLite query planner statistics primed.
+- **Asset Optimization:** WebP image conversions, responsive `srcset`, font preloading, and code-split chunks.
+- **Analytics:** Optional Plausible Analytics or GA4 integration via `PLAUSIBLE_DOMAIN` and `GA4_MEASUREMENT_ID` tracking `add_to_cart`, `begin_checkout`, `order_placed`, and `welcome_modal_signup`.
+
+

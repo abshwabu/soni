@@ -32,7 +32,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $dbSettings = Setting::pluck('value', 'key')->all();
+        $dbSettings = \Illuminate\Support\Facades\Cache::remember('store_settings', 3600, function () {
+            return Setting::pluck('value', 'key')->all();
+        });
 
         $settings = array_merge([
             'store_name' => 'Soni Perfume',
@@ -62,13 +64,21 @@ class HandleInertiaRequests extends Middleware
             'settings' => $settings,
             'cartCount' => fn () => $cartService->count(),
             'miniCart' => fn () => $cartService->toArray(),
-            'categoriesNav' => fn () => Category::orderBy('sort_order')
-                ->select('id', 'name', 'slug')
-                ->get(),
-            'brandsNav' => fn () => Brand::where('is_featured', true)
-                ->select('id', 'name', 'slug')
-                ->limit(8)
-                ->get(),
+            'categoriesNav' => fn () => \Illuminate\Support\Facades\Cache::remember('nav_categories', 3600, function () {
+                return Category::orderBy('sort_order')
+                    ->select('id', 'name', 'slug')
+                    ->get();
+            }),
+            'brandsNav' => fn () => \Illuminate\Support\Facades\Cache::remember('nav_brands', 3600, function () {
+                return Brand::where('is_featured', true)
+                    ->select('id', 'name', 'slug')
+                    ->limit(8)
+                    ->get();
+            }),
+            'analytics' => [
+                'plausible_domain' => config('services.analytics.plausible_domain'),
+                'ga4_id' => config('services.analytics.ga4_id'),
+            ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),

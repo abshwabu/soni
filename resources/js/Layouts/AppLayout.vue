@@ -305,10 +305,10 @@ const phoneUrl = computed(() => {
                         </Link>
 
                         <Link
-                            href="/category/gift-sets"
+                            href="/gifts"
                             class="hover:text-brand-gold transition-colors duration-150 py-2 relative group"
                         >
-                            <span>Gift Sets</span>
+                            <span>Gift Guide</span>
                             <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-gold transition-all duration-200 group-hover:w-full" />
                         </Link>
                     </nav>
@@ -477,11 +477,11 @@ const phoneUrl = computed(() => {
                     </Link>
 
                     <Link
-                        href="/category/gift-sets"
+                        href="/gifts"
                         class="py-3 px-2 border-b border-brand-border/60 hover:text-brand-gold transition-colors flex items-center justify-between"
                         @click="mobileMenuOpen = false"
                     >
-                        <span>Gift Sets & Boxes</span>
+                        <span>Fragrance Gift Guide</span>
                         <span>›</span>
                     </Link>
 
@@ -499,7 +499,16 @@ const phoneUrl = computed(() => {
                         class="py-3 px-2 border-b border-brand-border/60 hover:text-brand-gold transition-colors flex items-center justify-between"
                         @click="mobileMenuOpen = false"
                     >
-                        <span>Contact & Visit</span>
+                        <span>Contact & Boutique Visit</span>
+                        <span>›</span>
+                    </Link>
+
+                    <Link
+                        href="/delivery-returns"
+                        class="py-3 px-2 border-b border-brand-border/60 hover:text-brand-gold transition-colors flex items-center justify-between text-brand-muted"
+                        @click="mobileMenuOpen = false"
+                    >
+                        <span>Delivery & Returns Policy</span>
                         <span>›</span>
                     </Link>
                 </nav>
@@ -1051,20 +1060,36 @@ const phoneUrl = computed(() => {
                                 </Link>
                             </li>
                             <li>
-                                <span class="text-brand-bg/50">Same-Day Addis Delivery</span>
-                            </li>
-                            <li>
-                                <span class="text-brand-bg/50">100% Authenticity Guarantee</span>
-                            </li>
-                            <li>
-                                <a
-                                    :href="telegramUrl"
-                                    target="_blank"
-                                    rel="noopener"
-                                    class="text-brand-gold hover:underline"
+                                <Link
+                                    href="/gifts"
+                                    class="hover:text-brand-gold transition-colors"
                                 >
-                                    Join Telegram Channel
-                                </a>
+                                    Fragrance Gift Guide
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/delivery-returns"
+                                    class="hover:text-brand-gold transition-colors"
+                                >
+                                    Delivery & Returns Policy
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/privacy"
+                                    class="hover:text-brand-gold transition-colors"
+                                >
+                                    Privacy Policy
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/terms"
+                                    class="hover:text-brand-gold transition-colors"
+                                >
+                                    Terms & Conditions
+                                </Link>
                             </li>
                         </ul>
                     </div>

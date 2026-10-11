@@ -48,6 +48,27 @@ Route::middleware(['web', 'auth'])->get('/admin/orders/{order}/invoice', functio
     return view('admin.orders.invoice', compact('order'));
 })->name('admin.orders.invoice');
 
+// Gift Guide
+Route::get('/gifts', [\App\Http\Controllers\GiftGuideController::class, 'index'])->name('gifts.index');
+
+// About & Content Pages
+Route::get('/about', [\App\Http\Controllers\PageController::class, 'about'])->name('about');
+Route::get('/contact', [\App\Http\Controllers\PageController::class, 'contact'])->name('contact');
+Route::post('/contact', [\App\Http\Controllers\PageController::class, 'submitContact'])->name('contact.submit');
+Route::get('/delivery-returns', fn () => app(\App\Http\Controllers\PageController::class)->show('delivery-returns'))->name('delivery-returns');
+Route::get('/privacy', fn () => app(\App\Http\Controllers\PageController::class)->show('privacy'))->name('privacy');
+Route::get('/terms', fn () => app(\App\Http\Controllers\PageController::class)->show('terms'))->name('terms');
+Route::get('/p/{slug}', [\App\Http\Controllers\PageController::class, 'show'])->name('pages.show');
+
+// Dynamic Sitemap XML
+Route::get('/sitemap.xml', function (\App\Services\SitemapService $sitemapService) {
+    return response($sitemapService->generateXml(), 200, [
+        'Content-Type' => 'application/xml; charset=utf-8',
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->name('sitemap');
+
 // Telegram Bot Webhook
 Route::post('/telegram/webhook/{secret}', [\App\Http\Controllers\TelegramWebhookController::class, 'handle'])->name('telegram.webhook');
+
 

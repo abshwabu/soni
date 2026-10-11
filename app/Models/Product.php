@@ -68,6 +68,19 @@ class Product extends Model implements HasMedia
 
     protected static function booted(): void
     {
+        static::updating(function (Product $product) {
+            if ($product->isDirty('slug')) {
+                $oldSlug = $product->getOriginal('slug');
+                $newSlug = $product->slug;
+                if ($oldSlug && $newSlug && $oldSlug !== $newSlug) {
+                    \App\Models\SlugRedirect::updateOrCreate(
+                        ['source_slug' => $oldSlug, 'model_type' => Product::class],
+                        ['target_slug' => $newSlug, 'model_id' => $product->id]
+                    );
+                }
+            }
+        });
+
         static::saved(function (Product $product) {
             app(\App\Services\SearchService::class)->indexProduct($product);
         });
