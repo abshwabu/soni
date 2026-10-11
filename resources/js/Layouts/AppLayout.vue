@@ -1,6 +1,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 import Drawer from '../Components/Drawer.vue';
 import Modal from '../Components/Modal.vue';
@@ -8,9 +9,15 @@ import Toast from '../Components/Toast.vue';
 import Button from '../Components/Button.vue';
 import MiniCartDrawer from '../Components/MiniCartDrawer.vue';
 import { useToast } from '../Composables/useToast';
+import { setLocale } from '../i18n';
 
 const page = usePage();
 const { success, error } = useToast();
+const { t, locale: currentLocale } = useI18n();
+
+const switchLocale = (lang) => {
+    setLocale(lang);
+};
 
 const settings = computed(() => page.props.settings || {});
 const cartCount = computed(() => page.props.cartCount || 0);
@@ -151,25 +158,61 @@ const phoneUrl = computed(() => {
                         <span>{{ settings.store_phone || '+251 91 123 4567' }}</span>
                     </a>
                     <span>•</span>
-                    <span>Addis Ababa, Ethiopia</span>
+                    <span>{{ currentLocale === 'am' ? 'አዲስ አበባ፣ ኢትዮጵያ' : 'Addis Ababa, Ethiopia' }}</span>
                 </div>
 
                 <!-- Center Banner Text -->
                 <div class="mx-auto text-center truncate max-w-2xl px-2 font-medium">
                     <span class="text-brand-gold mr-1.5 font-semibold">✨</span>
-                    <span>{{ settings.welcome_discount_text || `Complimentary delivery across Addis Ababa on orders over ETB ${Number(settings.free_delivery_threshold || 5000).toLocaleString()}!` }}</span>
+                    <span>{{ settings.welcome_discount_text || (currentLocale === 'am' ? `ከ ${Number(settings.free_delivery_threshold || 5000).toLocaleString()} ብር በላይ ለሆኑ ትዕዛዞች በመላው አዲስ አበባ ነፃ ማድረሻ!` : `Complimentary delivery across Addis Ababa on orders over ETB ${Number(settings.free_delivery_threshold || 5000).toLocaleString()}!`) }}</span>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <a
-                        :href="telegramUrl"
-                        target="_blank"
-                        rel="noopener"
-                        class="hidden md:inline-flex items-center gap-1 text-[11px] text-brand-gold hover:text-white transition-colors"
-                    >
-                        <span>Telegram Bot</span>
-                        <span>→</span>
-                    </a>
+                <div class="flex items-center gap-2.5 sm:gap-3">
+                    <!-- Language Choosing Button (Switch between Amharic and English) -->
+                    <div class="inline-flex items-center gap-1.5 text-[11px]">
+                        <svg
+                            class="w-3.5 h-3.5 text-brand-gold shrink-0 hidden sm:block"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.8"
+                                d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418"
+                            />
+                        </svg>
+                        <div
+                            class="inline-flex items-center bg-white/10 rounded-xs p-0.5 border border-white/15"
+                            role="group"
+                            aria-label="Language selection"
+                        >
+                            <button
+                                type="button"
+                                class="px-2 py-0.5 rounded-[2px] text-[10px] tracking-wider transition-all duration-150 focus:outline-none uppercase font-medium cursor-pointer"
+                                :class="currentLocale === 'en' ? 'bg-brand-gold text-brand-charcoal font-semibold shadow-xs' : 'text-brand-bg/75 hover:text-white'"
+                                :aria-pressed="currentLocale === 'en'"
+                                title="English"
+                                @click="switchLocale('en')"
+                            >
+                                <span class="hidden md:inline">English</span>
+                                <span class="md:hidden">EN</span>
+                            </button>
+                            <button
+                                type="button"
+                                class="px-2 py-0.5 rounded-[2px] text-[10px] tracking-wider transition-all duration-150 focus:outline-none font-sans font-medium cursor-pointer"
+                                :class="currentLocale === 'am' ? 'bg-brand-gold text-brand-charcoal font-semibold shadow-xs' : 'text-brand-bg/75 hover:text-white'"
+                                :aria-pressed="currentLocale === 'am'"
+                                title="አማርኛ"
+                                @click="switchLocale('am')"
+                            >
+                                <span class="hidden md:inline">አማርኛ</span>
+                                <span class="md:hidden">አማ</span>
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- Close Announcement -->
                     <button
@@ -255,7 +298,7 @@ const phoneUrl = computed(() => {
                             href="/shop"
                             class="hover:text-brand-gold transition-colors duration-150 py-2 relative group"
                         >
-                            <span>Shop</span>
+                            <span>{{ $t('nav.shop') }}</span>
                             <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-gold transition-all duration-200 group-hover:w-full" />
                         </Link>
 
@@ -265,7 +308,7 @@ const phoneUrl = computed(() => {
                                 href="/shop"
                                 class="flex items-center gap-1 hover:text-brand-gold transition-colors duration-150"
                             >
-                                <span>Categories</span>
+                                <span>{{ $t('nav.categories') }}</span>
                                 <svg
                                     class="w-3 h-3 text-brand-muted transition-transform group-hover:rotate-180"
                                     fill="none"
@@ -300,7 +343,7 @@ const phoneUrl = computed(() => {
                             href="/brands"
                             class="hover:text-brand-gold transition-colors duration-150 py-2 relative group"
                         >
-                            <span>Brands</span>
+                            <span>{{ $t('nav.brands') }}</span>
                             <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-gold transition-all duration-200 group-hover:w-full" />
                         </Link>
 
@@ -308,7 +351,7 @@ const phoneUrl = computed(() => {
                             href="/gifts"
                             class="hover:text-brand-gold transition-colors duration-150 py-2 relative group"
                         >
-                            <span>Gift Guide</span>
+                            <span>{{ $t('nav.gifts') }}</span>
                             <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-gold transition-all duration-200 group-hover:w-full" />
                         </Link>
                     </nav>
@@ -331,22 +374,35 @@ const phoneUrl = computed(() => {
                     <!-- Right Desktop Nav & Utilities -->
                     <div class="flex items-center gap-4 sm:gap-6">
                         <nav
-                            class="hidden lg:flex items-center gap-6 text-xs uppercase tracking-widest font-sans font-medium text-brand-charcoal mr-2"
+                            class="hidden lg:flex items-center gap-6 text-xs uppercase tracking-widest font-sans font-medium text-brand-charcoal mr-1"
                             aria-label="Secondary Navigation"
                         >
                             <Link
                                 href="/about"
                                 class="hover:text-brand-gold transition-colors duration-150 py-2"
                             >
-                                About
+                                {{ $t('nav.about') }}
                             </Link>
                             <Link
                                 href="/contact"
                                 class="hover:text-brand-gold transition-colors duration-150 py-2"
                             >
-                                Contact
+                                {{ $t('nav.contact') }}
                             </Link>
                         </nav>
+
+                        <!-- Desktop Header Language Toggle -->
+                        <div class="hidden lg:flex items-center">
+                            <button
+                                type="button"
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border border-brand-border/70 hover:border-brand-gold text-[11px] font-sans font-semibold text-brand-charcoal hover:text-brand-gold transition-colors cursor-pointer"
+                                :title="currentLocale === 'en' ? 'Switch to Amharic (አማርኛ)' : 'Switch to English'"
+                                @click="switchLocale(currentLocale === 'en' ? 'am' : 'en')"
+                            >
+                                <span class="w-1.5 h-1.5 rounded-full bg-brand-gold" />
+                                <span>{{ currentLocale === 'en' ? 'አማርኛ' : 'EN' }}</span>
+                            </button>
+                        </div>
 
                         <!-- Search trigger (desktop) -->
                         <button
@@ -368,7 +424,7 @@ const phoneUrl = computed(() => {
                                     d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
                                 />
                             </svg>
-                            <span class="hidden xl:inline text-[11px]">Search</span>
+                            <span class="hidden xl:inline text-[11px]">{{ $t('nav.search') }}</span>
                         </button>
 
                         <!-- Live Cart / Bag Button -->
@@ -403,7 +459,7 @@ const phoneUrl = computed(() => {
                             </div>
 
                             <span class="hidden sm:inline text-xs uppercase tracking-wider font-medium text-brand-charcoal">
-                                Bag
+                                {{ $t('nav.bag') }}
                             </span>
                         </button>
                     </div>
@@ -425,7 +481,35 @@ const phoneUrl = computed(() => {
             max-width="sm"
             @close="mobileMenuOpen = false"
         >
-            <div class="flex flex-col gap-6 py-2">
+            <div class="flex flex-col gap-5 py-2">
+                <!-- Mobile Language Selector -->
+                <div class="p-2.5 bg-brand-surface-warm/80 rounded-sm border border-brand-border/60 flex items-center justify-between">
+                    <span class="text-xs font-semibold tracking-wider text-brand-charcoal flex items-center gap-1.5 uppercase">
+                        <svg class="w-4 h-4 text-brand-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                        </svg>
+                        <span>{{ currentLocale === 'am' ? 'ቋንቋ' : 'Language' }}</span>
+                    </span>
+                    <div class="inline-flex items-center bg-white rounded-xs p-0.5 border border-brand-border">
+                        <button
+                            type="button"
+                            class="px-2.5 py-1 rounded-[2px] text-xs transition-all font-medium cursor-pointer"
+                            :class="currentLocale === 'en' ? 'bg-brand-charcoal text-brand-gold font-semibold shadow-xs' : 'text-brand-muted hover:text-brand-charcoal'"
+                            @click="switchLocale('en')"
+                        >
+                            English
+                        </button>
+                        <button
+                            type="button"
+                            class="px-2.5 py-1 rounded-[2px] text-xs transition-all font-sans font-medium cursor-pointer"
+                            :class="currentLocale === 'am' ? 'bg-brand-charcoal text-brand-gold font-semibold shadow-xs' : 'text-brand-muted hover:text-brand-charcoal'"
+                            @click="switchLocale('am')"
+                        >
+                            አማርኛ
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Navigation links list -->
                 <nav
                     class="flex flex-col gap-1 text-sm uppercase tracking-widest font-sans font-medium text-brand-charcoal"
@@ -436,7 +520,7 @@ const phoneUrl = computed(() => {
                         class="py-3 px-2 border-b border-brand-border/60 hover:text-brand-gold transition-colors flex items-center justify-between"
                         @click="mobileMenuOpen = false"
                     >
-                        <span>Home</span>
+                        <span>{{ $t('nav.home') }}</span>
                         <span>›</span>
                     </Link>
 
@@ -445,14 +529,14 @@ const phoneUrl = computed(() => {
                         class="py-3 px-2 border-b border-brand-border/60 hover:text-brand-gold transition-colors flex items-center justify-between"
                         @click="mobileMenuOpen = false"
                     >
-                        <span>All Fragrances</span>
+                        <span>{{ $t('nav.all_fragrances') }}</span>
                         <span>›</span>
                     </Link>
 
                     <!-- Categories list -->
                     <div class="py-2 px-2 border-b border-brand-border/60">
                         <p class="text-[11px] font-semibold text-brand-gold tracking-extrawide mb-2">
-                            Fragrance Categories
+                            {{ $t('nav.categories') }}
                         </p>
                         <div class="grid grid-cols-2 gap-2 text-xs normal-case tracking-normal pl-1">
                             <Link
@@ -472,7 +556,7 @@ const phoneUrl = computed(() => {
                         class="py-3 px-2 border-b border-brand-border/60 hover:text-brand-gold transition-colors flex items-center justify-between"
                         @click="mobileMenuOpen = false"
                     >
-                        <span>Featured Brands</span>
+                        <span>{{ $t('nav.brands') }}</span>
                         <span>›</span>
                     </Link>
 
@@ -481,7 +565,7 @@ const phoneUrl = computed(() => {
                         class="py-3 px-2 border-b border-brand-border/60 hover:text-brand-gold transition-colors flex items-center justify-between"
                         @click="mobileMenuOpen = false"
                     >
-                        <span>Fragrance Gift Guide</span>
+                        <span>{{ $t('nav.gifts') }}</span>
                         <span>›</span>
                     </Link>
 
@@ -490,7 +574,7 @@ const phoneUrl = computed(() => {
                         class="py-3 px-2 border-b border-brand-border/60 hover:text-brand-gold transition-colors flex items-center justify-between"
                         @click="mobileMenuOpen = false"
                     >
-                        <span>About Our Story</span>
+                        <span>{{ $t('nav.about') }}</span>
                         <span>›</span>
                     </Link>
 
@@ -499,7 +583,7 @@ const phoneUrl = computed(() => {
                         class="py-3 px-2 border-b border-brand-border/60 hover:text-brand-gold transition-colors flex items-center justify-between"
                         @click="mobileMenuOpen = false"
                     >
-                        <span>Contact & Boutique Visit</span>
+                        <span>{{ $t('nav.contact') }}</span>
                         <span>›</span>
                     </Link>
 
@@ -508,7 +592,7 @@ const phoneUrl = computed(() => {
                         class="py-3 px-2 border-b border-brand-border/60 hover:text-brand-gold transition-colors flex items-center justify-between text-brand-muted"
                         @click="mobileMenuOpen = false"
                     >
-                        <span>Delivery & Returns Policy</span>
+                        <span>{{ $t('nav.delivery_returns') }}</span>
                         <span>›</span>
                     </Link>
                 </nav>
@@ -516,17 +600,17 @@ const phoneUrl = computed(() => {
                 <!-- Direct Customer Support Contact -->
                 <div class="bg-brand-surface p-4 rounded-sm border border-brand-border/80 space-y-3">
                     <p class="text-[11px] font-semibold uppercase tracking-widest text-brand-gold">
-                        Customer Assistance
+                        {{ $t('nav.customer_assistance') }}
                     </p>
                     <p class="text-xs text-brand-muted leading-relaxed">
-                        Fast delivery across Addis Ababa. Questions about scents or orders?
+                        {{ currentLocale === 'am' ? 'ፈጣን ማድረሻ በመላው አዲስ አበባ። ስለ ሽቶዎች ወይም ትዕዛዝ ጥያቄ አለዎት?' : 'Fast delivery across Addis Ababa. Questions about scents or orders?' }}
                     </p>
                     <div class="flex flex-col gap-2 pt-1">
                         <a
                             :href="phoneUrl"
                             class="inline-flex items-center gap-2 text-xs font-medium text-brand-charcoal hover:text-brand-gold"
                         >
-                            <span>📞 Call:</span>
+                            <span>📞 {{ currentLocale === 'am' ? 'ይደውሉ:' : 'Call:' }}</span>
                             <span>{{ settings.store_phone || '+251 91 123 4567' }}</span>
                         </a>
                         <a
@@ -535,7 +619,7 @@ const phoneUrl = computed(() => {
                             rel="noopener"
                             class="inline-flex items-center gap-2 text-xs font-medium text-emerald-800 hover:text-emerald-900"
                         >
-                            <span>💬 WhatsApp Direct Chat</span>
+                            <span>💬 {{ currentLocale === 'am' ? 'የዋትስአፕ ቀጥታ መልእክት' : 'WhatsApp Direct Chat' }}</span>
                         </a>
                         <a
                             :href="telegramUrl"
@@ -543,7 +627,7 @@ const phoneUrl = computed(() => {
                             rel="noopener"
                             class="inline-flex items-center gap-2 text-xs font-medium text-sky-700 hover:text-sky-800"
                         >
-                            <span>✈️ Telegram Channel & Bot</span>
+                            <span>✈️ {{ currentLocale === 'am' ? 'የቴሌግራም ቻናል' : 'Telegram Channel' }}</span>
                         </a>
                     </div>
                 </div>
@@ -883,7 +967,7 @@ const phoneUrl = computed(() => {
                         d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
                     />
                 </svg>
-                <span>Home</span>
+                <span>{{ $t('nav.home') }}</span>
             </Link>
 
             <Link
@@ -903,7 +987,7 @@ const phoneUrl = computed(() => {
                         d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
                     />
                 </svg>
-                <span>Shop</span>
+                <span>{{ $t('nav.shop') }}</span>
             </Link>
 
             <button
@@ -924,7 +1008,7 @@ const phoneUrl = computed(() => {
                         d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
                     />
                 </svg>
-                <span>Search</span>
+                <span>{{ $t('nav.search') }}</span>
             </button>
 
             <button
@@ -954,7 +1038,7 @@ const phoneUrl = computed(() => {
                         {{ cartCount }}
                     </span>
                 </div>
-                <span>Bag</span>
+                <span>{{ $t('nav.bag') }}</span>
             </button>
         </nav>
 
@@ -1004,7 +1088,7 @@ const phoneUrl = computed(() => {
                     <!-- Col 3: Quick Links -->
                     <div class="space-y-3">
                         <h4 class="text-xs font-semibold uppercase tracking-widest text-brand-gold font-sans">
-                            Collections
+                            {{ currentLocale === 'am' ? 'የሽቶ ስብስቦች' : 'Collections' }}
                         </h4>
                         <ul class="space-y-2 text-xs font-sans text-brand-bg/70 font-light">
                             <li>
@@ -1012,7 +1096,7 @@ const phoneUrl = computed(() => {
                                     href="/shop"
                                     class="hover:text-brand-gold transition-colors"
                                 >
-                                    All Fragrances
+                                    {{ $t('nav.all_fragrances') }}
                                 </Link>
                             </li>
                             <li
@@ -1031,7 +1115,7 @@ const phoneUrl = computed(() => {
                                     href="/brands"
                                     class="hover:text-brand-gold transition-colors"
                                 >
-                                    Designer Brands
+                                    {{ currentLocale === 'am' ? 'ዲዛይነር ብራንዶች' : 'Designer Brands' }}
                                 </Link>
                             </li>
                         </ul>
@@ -1040,7 +1124,7 @@ const phoneUrl = computed(() => {
                     <!-- Col 4: Store & Service -->
                     <div class="space-y-3">
                         <h4 class="text-xs font-semibold uppercase tracking-widest text-brand-gold font-sans">
-                            Information
+                            {{ currentLocale === 'am' ? 'መረጃዎች' : 'Information' }}
                         </h4>
                         <ul class="space-y-2 text-xs font-sans text-brand-bg/70 font-light">
                             <li>
@@ -1048,7 +1132,7 @@ const phoneUrl = computed(() => {
                                     href="/about"
                                     class="hover:text-brand-gold transition-colors"
                                 >
-                                    About Soni
+                                    {{ $t('nav.about') }}
                                 </Link>
                             </li>
                             <li>
@@ -1056,7 +1140,7 @@ const phoneUrl = computed(() => {
                                     href="/contact"
                                     class="hover:text-brand-gold transition-colors"
                                 >
-                                    Store Location & Contact
+                                    {{ currentLocale === 'am' ? 'የሱቅ አድራሻ እና ስልክ' : 'Store Location & Contact' }}
                                 </Link>
                             </li>
                             <li>
@@ -1064,7 +1148,7 @@ const phoneUrl = computed(() => {
                                     href="/gifts"
                                     class="hover:text-brand-gold transition-colors"
                                 >
-                                    Fragrance Gift Guide
+                                    {{ $t('nav.gifts') }}
                                 </Link>
                             </li>
                             <li>
@@ -1072,7 +1156,7 @@ const phoneUrl = computed(() => {
                                     href="/delivery-returns"
                                     class="hover:text-brand-gold transition-colors"
                                 >
-                                    Delivery & Returns Policy
+                                    {{ $t('nav.delivery_returns') }}
                                 </Link>
                             </li>
                             <li>
@@ -1080,7 +1164,7 @@ const phoneUrl = computed(() => {
                                     href="/privacy"
                                     class="hover:text-brand-gold transition-colors"
                                 >
-                                    Privacy Policy
+                                    {{ currentLocale === 'am' ? 'የግላዊነት መመሪያ' : 'Privacy Policy' }}
                                 </Link>
                             </li>
                             <li>
@@ -1088,7 +1172,7 @@ const phoneUrl = computed(() => {
                                     href="/terms"
                                     class="hover:text-brand-gold transition-colors"
                                 >
-                                    Terms & Conditions
+                                    {{ currentLocale === 'am' ? 'ውሎች እና ሁኔታዎች' : 'Terms & Conditions' }}
                                 </Link>
                             </li>
                         </ul>
@@ -1097,10 +1181,10 @@ const phoneUrl = computed(() => {
                     <!-- Col 5: Newsletter Signup -->
                     <div class="space-y-3">
                         <h4 class="text-xs font-semibold uppercase tracking-widest text-brand-gold font-sans">
-                            Join The Circle
+                            {{ currentLocale === 'am' ? 'ክበቡን ይቀላቀሉ' : 'Join The Circle' }}
                         </h4>
                         <p class="text-xs text-brand-bg/70 font-sans font-light leading-relaxed">
-                            Subscribe for exclusive private arrivals and VIP perfume announcements.
+                            {{ currentLocale === 'am' ? 'ለአዳዲስ ሽቶዎች፣ ቅናሾች እና መረጃዎች ይመዝገቡ።' : 'Subscribe for exclusive private arrivals and VIP perfume announcements.' }}
                         </p>
 
                         <form
@@ -1111,7 +1195,7 @@ const phoneUrl = computed(() => {
                                 <input
                                     v-model="newsletterForm.email_or_phone"
                                     type="text"
-                                    placeholder="Phone or email address"
+                                    :placeholder="currentLocale === 'am' ? 'ስልክ ወይም ኢሜይል ያስገቡ' : 'Phone or email address'"
                                     required
                                     class="w-full px-3 py-2.5 bg-white/5 border border-white/15 rounded-sm text-xs text-white placeholder:text-white/40 focus:border-brand-gold focus:ring-1 focus:ring-brand-gold"
                                 >
@@ -1124,7 +1208,7 @@ const phoneUrl = computed(() => {
                                 block
                                 :loading="newsletterForm.processing"
                             >
-                                Subscribe
+                                {{ currentLocale === 'am' ? 'ይመዝገቡ' : 'Subscribe' }}
                             </Button>
                         </form>
                     </div>
@@ -1132,7 +1216,7 @@ const phoneUrl = computed(() => {
 
                 <!-- Footer Bottom Sub-Bar -->
                 <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-brand-bg/50 font-sans">
-                    <p>© {{ new Date().getFullYear() }} {{ settings.store_name || 'Soni Perfume' }}. All rights reserved. Addis Ababa, Ethiopia.</p>
+                    <p>© {{ new Date().getFullYear() }} {{ settings.store_name || 'Soni Perfume' }}. {{ currentLocale === 'am' ? 'መብቱ በህግ የተጠበቀ ነው። አዲስ አበባ፣ ኢትዮጵያ።' : 'All rights reserved. Addis Ababa, Ethiopia.' }}</p>
 
                     <!-- Social Channels -->
                     <div class="flex items-center gap-4 text-brand-bg/70">

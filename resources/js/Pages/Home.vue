@@ -534,10 +534,10 @@ const jsonLdSchema = computed(() => {
                         </div>
                         <div>
                             <h4 class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
-                                100% Authentic
+                                {{ $i18n?.locale === 'am' ? '100% ኦሪጅናል' : '100% Authentic' }}
                             </h4>
                             <p class="text-[11px] text-brand-muted mt-0.5">
-                                Paris, Italy & Dubai batches
+                                {{ $i18n?.locale === 'am' ? 'ከፓሪስ፣ ጣሊያን እና ዱባይ' : 'Paris, Italy & Dubai batches' }}
                             </p>
                         </div>
                     </div>
@@ -561,10 +561,10 @@ const jsonLdSchema = computed(() => {
                         </div>
                         <div>
                             <h4 class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
-                                Same-Day Delivery
+                                {{ $i18n?.locale === 'am' ? 'በተመሳሳይ ቀን ማድረሻ' : 'Same-Day Delivery' }}
                             </h4>
                             <p class="text-[11px] text-brand-muted mt-0.5">
-                                Doorstep arrival in Addis
+                                {{ $i18n?.locale === 'am' ? 'በአዲስ አበባ እስከ ደጃፍዎ' : 'Doorstep arrival in Addis' }}
                             </p>
                         </div>
                     </div>
@@ -588,10 +588,10 @@ const jsonLdSchema = computed(() => {
                         </div>
                         <div>
                             <h4 class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
-                                Pay On Delivery
+                                {{ $i18n?.locale === 'am' ? 'ሲረከቡ ይክፈሉ' : 'Pay On Delivery' }}
                             </h4>
                             <p class="text-[11px] text-brand-muted mt-0.5">
-                                Inspect bottle before payment
+                                {{ $i18n?.locale === 'am' ? 'ሽቶውን አይተው ይክፈሉ' : 'Inspect bottle before payment' }}
                             </p>
                         </div>
                     </div>
@@ -615,10 +615,10 @@ const jsonLdSchema = computed(() => {
                         </div>
                         <div>
                             <h4 class="text-xs font-semibold uppercase tracking-wider font-sans text-brand-charcoal">
-                                Luxury Packaging
+                                {{ $i18n?.locale === 'am' ? 'የቅንጦት ማሸጊያ' : 'Luxury Packaging' }}
                             </h4>
                             <p class="text-[11px] text-brand-muted mt-0.5">
-                                Complimentary bespoke box
+                                {{ $i18n?.locale === 'am' ? 'ልዩ የስጦታ ሳጥን' : 'Complimentary bespoke box' }}
                             </p>
                         </div>
                     </div>
@@ -631,10 +631,10 @@ const jsonLdSchema = computed(() => {
         <!-- ======================================================================= -->
         <section class="py-16 sm:py-20 container mx-auto px-4 sm:px-6">
             <SectionHeading
-                eyebrow="Curated Fragrance Worlds"
-                title="Shop By Category"
-                description="Discover your olfactory identity across specialized collections."
-                action-text="All Categories"
+                :eyebrow="$i18n?.locale === 'am' ? 'የሽቶ ዓለማት' : 'Curated Fragrance Worlds'"
+                :title="$i18n?.locale === 'am' ? 'በምድብ ይምረጡ' : 'Shop By Category'"
+                :description="$i18n?.locale === 'am' ? 'የሚወዱትን የሽቶ ዓይነት ከተመረጡ ስብስቦች ይምረጡ።' : 'Discover your olfactory identity across specialized collections.'"
+                :action-text="$i18n?.locale === 'am' ? 'ሁሉም ምድቦች' : 'All Categories'"
                 action-href="/shop"
             />
 
@@ -676,10 +676,10 @@ const jsonLdSchema = computed(() => {
         <section class="py-16 sm:py-20 bg-brand-surface-warm/40 border-y border-brand-border/60">
             <div class="container mx-auto px-4 sm:px-6">
                 <SectionHeading
-                    eyebrow="Addis Ababa Favorites"
-                    title="Most Loved Bestsellers"
-                    description="The most complimented and requested perfumes in our boutique."
-                    action-text="Shop All Bestsellers"
+                    :eyebrow="$i18n?.locale === 'am' ? 'በአዲስ አበባ ተወዳጅ' : 'Addis Ababa Favorites'"
+                    :title="$i18n?.locale === 'am' ? 'ተወዳጅ ሽቶዎች' : 'Most Loved Bestsellers'"
+                    :description="$i18n?.locale === 'am' ? 'በአዲስ አበባ ከፍተኛ ተወዳጅነት ያተረፉ ኦሪጅናል ሽቶዎች።' : 'The most complimented and requested perfumes in our boutique.'"
+                    :action-text="$i18n?.locale === 'am' ? 'ሁሉንም ተወዳጆች ይመልከቱ' : 'Shop All Bestsellers'"
                     action-href="/shop?sort=bestseller"
                 />
 
@@ -696,10 +696,10 @@ const jsonLdSchema = computed(() => {
         <!-- 4b. New Arrivals -->
         <section class="py-16 sm:py-20 container mx-auto px-4 sm:px-6">
             <SectionHeading
-                eyebrow="Fresh Shipments"
-                title="New Arrivals"
-                description="Latest releases and recently imported bottles from international fragrance houses."
-                action-text="Explore All New"
+                :eyebrow="$i18n?.locale === 'am' ? 'አዳዲስ ጭነቶች' : 'Fresh Shipments'"
+                :title="$i18n?.locale === 'am' ? 'አዳዲስ የገቡ' : 'New Arrivals'"
+                :description="$i18n?.locale === 'am' ? 'በቅርቡ የገቡ ኦሪጅናል ሽቶዎች እና አዳዲስ ምርቶች።' : 'Latest releases and recently imported bottles from international fragrance houses.'"
+                :action-text="$i18n?.locale === 'am' ? 'ሁሉንም አዳዲስ ይመልከቱ' : 'Explore All New'"
                 action-href="/shop?sort=newest"
             />
 

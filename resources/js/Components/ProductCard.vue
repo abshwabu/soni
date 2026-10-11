@@ -223,7 +223,7 @@ const executeAddToCart = (variantId) => {
                             d="M12 4.5v15m7.5-7.5h-15"
                         />
                     </svg>
-                    <span>{{ isOutOfStock ? 'Sold Out' : hasMultipleVariants ? 'Select Size' : 'Quick Add' }}</span>
+                    <span>{{ isOutOfStock ? ($i18n?.locale === 'am' ? 'አልቋል' : 'Sold Out') : hasMultipleVariants ? ($i18n?.locale === 'am' ? 'መጠን ይምረጡ' : 'Select Size') : ($i18n?.locale === 'am' ? 'ወደ ቦርሳ ጨምር' : 'Quick Add') }}</span>
                 </button>
             </div>
         </div>

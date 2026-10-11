@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
+import { useI18n } from 'vue-i18n';
 import Drawer from './Drawer.vue';
 import Button from './Button.vue';
 import { useToast } from '../Composables/useToast';
@@ -16,6 +17,7 @@ const emit = defineEmits(['close']);
 
 const page = usePage();
 const { success, error } = useToast();
+const { t, locale: currentLocale } = useI18n();
 
 const miniCart = computed(() => page.props.miniCart || { items: [], count: 0, subtotal: 0, free_delivery: {} });
 const items = computed(() => miniCart.value.items || []);
@@ -46,7 +48,7 @@ const handleClose = () => {
 <template>
     <Drawer
         :show="show"
-        :title="`Shopping Bag (${count})`"
+        :title="`${$t('cart.shopping_bag')} (${count})`"
         position="right"
         max-width="md"
         @close="handleClose"
@@ -63,13 +65,16 @@ const handleClose = () => {
                         class="text-emerald-800 font-semibold flex items-center gap-1.5"
                     >
                         <span>✨</span>
-                        <span>You unlocked <strong>FREE delivery</strong> across Addis Ababa!</span>
+                        <span>{{ currentLocale === 'am' ? 'በመላው አዲስ አበባ ነፃ ማድረሻ አግኝተዋል!' : 'You unlocked FREE delivery across Addis Ababa!' }}</span>
                     </span>
                     <span
                         v-else
                         class="text-brand-charcoal/80"
                     >
-                        Add <strong class="text-brand-charcoal">{{ freeDelivery.formatted_amount_needed }}</strong> more for <strong class="text-brand-gold">FREE delivery</strong>
+                        {{ currentLocale === 'am' ? `ነፃ ማድረሻ ለማግኘት` : `Add` }}
+                        <strong class="text-brand-charcoal">{{ freeDelivery.formatted_amount_needed }}</strong>
+                        {{ currentLocale === 'am' ? `ተጨማሪ ይጨምሩ` : `more for` }}
+                        <strong class="text-brand-gold">{{ currentLocale === 'am' ? 'ነፃ ማድረሻ' : 'FREE delivery' }}</strong>
                     </span>
                     <span class="text-[11px] font-bold text-brand-charcoal">{{ freeDelivery.progress }}%</span>
                 </div>
@@ -205,10 +210,10 @@ const handleClose = () => {
                     </svg>
                 </div>
                 <h3 class="font-serif text-lg font-medium text-brand-charcoal mb-1">
-                    Your bag is empty
+                    {{ $t('cart.empty') }}
                 </h3>
                 <p class="text-xs text-brand-muted max-w-xs mb-5">
-                    Explore our curated collection of authentic luxury fragrances.
+                    {{ $t('cart.empty_subtitle') }}
                 </p>
                 <Button
                     href="/shop"
@@ -216,7 +221,7 @@ const handleClose = () => {
                     size="sm"
                     @click="handleClose"
                 >
-                    Start Shopping
+                    {{ $t('cart.continue_shopping') }}
                 </Button>
             </div>
 
@@ -227,17 +232,17 @@ const handleClose = () => {
             >
                 <div class="space-y-1.5 text-xs">
                     <div class="flex justify-between text-brand-charcoal/80">
-                        <span>Subtotal:</span>
+                        <span>{{ $t('cart.subtotal') }}:</span>
                         <span class="font-serif font-bold text-sm text-brand-charcoal">{{ miniCart.formatted_subtotal }}</span>
                     </div>
                     <div class="flex justify-between text-brand-muted">
-                        <span>Addis Delivery:</span>
+                        <span>{{ currentLocale === 'am' ? 'የአዲስ አበባ ማድረሻ:' : 'Addis Delivery:' }}</span>
                         <span :class="miniCart.delivery_fee === 0 ? 'text-emerald-700 font-semibold' : ''">
                             {{ miniCart.formatted_delivery_fee }}
                         </span>
                     </div>
                     <div class="pt-2 border-t border-brand-border/60 flex justify-between text-sm font-semibold text-brand-charcoal">
-                        <span>Estimated Total:</span>
+                        <span>{{ $t('cart.total') }}:</span>
                         <span class="font-serif text-base text-brand-gold font-bold">{{ miniCart.formatted_total }}</span>
                     </div>
                 </div>
@@ -248,7 +253,7 @@ const handleClose = () => {
                         class="w-full py-3 px-4 rounded-sm bg-brand-charcoal text-white hover:bg-brand-charcoal/90 text-xs font-semibold uppercase tracking-widest text-center block transition-colors"
                         @click="handleClose"
                     >
-                        Checkout • Pay on Delivery
+                        {{ currentLocale === 'am' ? 'ትዕዛዝ ያጠናቁ • ሲረከቡ ይክፈሉ' : 'Checkout • Pay on Delivery' }}
                     </Link>
 
                     <Link
@@ -256,12 +261,12 @@ const handleClose = () => {
                         class="w-full py-2 px-4 rounded-sm border border-brand-border bg-brand-surface hover:border-brand-gold text-xs font-medium uppercase tracking-wider text-brand-charcoal text-center block transition-colors"
                         @click="handleClose"
                     >
-                        View Full Bag
+                        {{ $t('cart.view_bag') }}
                     </Link>
                 </div>
 
                 <p class="text-[10px] text-center text-brand-muted">
-                    No advance payment required. Cash / Telebirr upon arrival.
+                    {{ currentLocale === 'am' ? 'ቅድመ ክፍያ አያስፈልግም። በጥሬ ገንዘብ ወይም በቴሌብር ይክፈሉ።' : 'No advance payment required. Cash / Telebirr upon arrival.' }}
                 </p>
             </div>
         </div>
