@@ -69,6 +69,39 @@ class AppServiceProvider extends ServiceProvider
             \App\Events\OrderPlaced::class,
             \App\Listeners\SendOrderNotificationToTelegram::class
         );
+
+        // Operational Alert: Telegram notification when a queued background job fails
+        \Illuminate\Support\Facades\Queue::failing(function (\Illuminate\Queue\Events\JobFailed $event) {
+            try {
+                $telegram = app(\App\Services\TelegramService::class);
+                $adminChatIds = $telegram->getAllowedAdminChatIds();
+                if (empty($adminChatIds) || empty($telegram->getBotToken())) {
+                    return;
+                }
+
+                $jobName = class_basename($event->job->resolveName());
+                $exceptionMsg = substr($event->exception->getMessage(), 0, 300);
+                $escapedJob = $telegram->escape($jobName);
+                $escapedMsg = $telegram->escape($exceptionMsg);
+                $time = now('Africa/Addis_Ababa')->format('M d, Y h:i A');
+
+                $alert = <<<TEXT
+🚨 <b>Queue Job Failed Alert!</b>
+
+⚙️ <b>Job:</b> {$escapedJob}
+🔌 <b>Connection:</b> {$event->connectionName}
+📦 <b>Queue:</b> {$event->job->getQueue()}
+⚠️ <b>Error:</b> {$escapedMsg}
+🕒 <b>Time:</b> {$time}
+TEXT;
+
+                foreach ($adminChatIds as $chatId) {
+                    $telegram->sendMessage($chatId, $alert);
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error("Failed to send queue failure alert to Telegram: {$e->getMessage()}");
+            }
+        });
     }
 
     /**

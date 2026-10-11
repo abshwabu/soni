@@ -2,337 +2,325 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>http://localhost/</loc>
-    <lastmod>2026-10-11T03:28:53+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:50+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://localhost/shop</loc>
-    <lastmod>2026-10-11T03:28:53+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:50+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>http://localhost/gifts</loc>
-    <lastmod>2026-10-11T03:28:53+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:50+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/brands</loc>
-    <lastmod>2026-10-11T03:28:53+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:50+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://localhost/about</loc>
-    <lastmod>2026-10-11T03:28:53+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:50+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost/contact</loc>
-    <lastmod>2026-10-11T03:28:53+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:50+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://localhost/about</loc>
-    <lastmod>2026-10-11T03:17:22+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:18+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost/delivery-returns</loc>
-    <lastmod>2026-10-11T03:17:22+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:18+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost/privacy</loc>
-    <lastmod>2026-10-11T03:17:22+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:18+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost/terms</loc>
-    <lastmod>2026-10-11T03:17:22+00:00</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>http://localhost/p/vip-fragrance-club</loc>
-    <lastmod>2026-10-11T03:28:37+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:18+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://localhost/category/men</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/category/women</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/category/unisex</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/category/oud-arabian</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/category/gift-sets</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/category/body-mists</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/brand/dior</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://localhost/brand/chanel</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://localhost/brand/tom-ford</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://localhost/brand/creed</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://localhost/brand/maison-francis-kurkdjian</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://localhost/brand/lattafa</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://localhost/brand/afnan</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://localhost/brand/armaf</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/product/dior-sauvage-edp-new-scent</loc>
-    <lastmod>2026-10-11T03:28:36+00:00</lastmod>
+    <loc>http://localhost/product/dior-sauvage-edp</loc>
+    <lastmod>2026-10-11T03:49:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/dior-homme-intense</loc>
-    <lastmod>2026-10-10T21:34:00+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/miss-dior-edp</loc>
-    <lastmod>2026-10-10T21:34:01+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/bleu-de-chanel-parfum</loc>
-    <lastmod>2026-10-10T21:34:01+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/chanel-coco-mademoiselle</loc>
-    <lastmod>2026-10-10T21:34:01+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/chanel-no-5-edp</loc>
-    <lastmod>2026-10-10T21:34:01+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/tom-ford-tobacco-vanille</loc>
-    <lastmod>2026-10-10T21:34:01+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/tom-ford-oud-wood</loc>
-    <lastmod>2026-10-10T21:34:01+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:15+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/tom-ford-black-orchid-parfum</loc>
-    <lastmod>2026-10-10T21:34:01+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:15+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/tom-ford-lost-cherry</loc>
-    <lastmod>2026-10-10T21:34:01+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:15+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/creed-aventus</loc>
-    <lastmod>2026-10-10T21:34:01+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:15+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/creed-silver-mountain-water</loc>
-    <lastmod>2026-10-10T21:34:01+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:15+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/creed-green-irish-tweed</loc>
-    <lastmod>2026-10-10T21:34:02+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:15+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/mfk-baccarat-rouge-540</loc>
-    <lastmod>2026-10-10T21:34:02+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:15+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/mfk-grand-soir</loc>
-    <lastmod>2026-10-10T21:34:02+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:15+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/mfk-oud-satin-mood</loc>
-    <lastmod>2026-10-10T21:34:02+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:16+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/lattafa-khamrah</loc>
-    <lastmod>2026-10-10T21:34:02+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:16+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/lattafa-asad</loc>
-    <lastmod>2026-10-10T21:34:02+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:16+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/lattafa-badee-al-oud</loc>
-    <lastmod>2026-10-10T21:34:02+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:16+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/lattafa-yara-pink</loc>
-    <lastmod>2026-10-10T21:34:02+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:16+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/lattafa-nebras</loc>
-    <lastmod>2026-10-10T21:34:02+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:16+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/afnan-9-pm</loc>
-    <lastmod>2026-10-10T21:34:02+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:16+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/afnan-supremacy-not-only-intense</loc>
-    <lastmod>2026-10-10T21:34:03+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:17+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/afnan-souvenir-floral-bouquet</loc>
-    <lastmod>2026-10-10T21:34:03+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:17+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/armaf-cdnim-pure-parfum</loc>
-    <lastmod>2026-10-10T21:34:03+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:17+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/armaf-club-de-nuit-milestone</loc>
-    <lastmod>2026-10-10T21:34:03+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:17+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/armaf-club-de-nuit-untold</loc>
-    <lastmod>2026-10-10T21:34:03+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:17+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/lattafa-velvet-rose-gift-set</loc>
-    <lastmod>2026-10-10T21:34:03+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:17+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/dior-sauvage-edp-gift-set</loc>
-    <lastmod>2026-10-10T21:34:03+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:17+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost/product/lattafa-yara-body-mist</loc>
-    <lastmod>2026-10-10T21:34:03+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>http://localhost/product/dior-sauvage-edp</loc>
-    <lastmod>2026-10-11T03:28:45+00:00</lastmod>
+    <lastmod>2026-10-11T03:49:17+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>

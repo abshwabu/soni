@@ -255,8 +255,187 @@ php artisan telegram:test
 - **N+1 Prevention:** `Model::preventLazyLoading(! app()->isProduction())` enabled to enforce eager loading.
 - **Slow Query Logging:** Automatic warning logs for queries exceeding 50ms in non-production.
 - **Query & Bundle Caching:** Navigation categories, store settings, and home page collections cached with short TTL and automatically invalidated upon model save/delete events.
-- **SQLite Maintenance:** Daily scheduled `PRAGMA optimize;` command (`php artisan db:optimize-sqlite`) keeping SQLite query planner statistics primed.
+- **SQLite Maintenance:** Scheduled daily `PRAGMA optimize;` (`php artisan db:optimize-sqlite`) and weekly `PRAGMA integrity_check;` + `PRAGMA wal_checkpoint(TRUNCATE);` (`php artisan db:maintenance-sqlite`).
 - **Asset Optimization:** WebP image conversions, responsive `srcset`, font preloading, and code-split chunks.
 - **Analytics:** Optional Plausible Analytics or GA4 integration via `PLAUSIBLE_DOMAIN` and `GA4_MEASUREMENT_ID` tracking `add_to_cart`, `begin_checkout`, `order_placed`, and `welcome_modal_signup`.
+
+---
+
+## Production Deployment & Operations Guide
+
+### 1. Single-Server VPS Architecture (Ubuntu 24.04/22.04 LTS)
+
+Soni Perfume is designed for high efficiency on a single VPS (e.g. 2 vCPU, 2-4GB RAM) running:
+- **Web Server:** Nginx with HTTP/2 and gzip compression
+- **Runtime:** PHP-FPM 8.3 (`php8.3-fpm`, `php8.3-sqlite3` with FTS5 enabled, `php8.3-intl`, `php8.3-mbstring`, `php8.3-xml`, `php8.3-curl`, `php8.3-zip`)
+- **Database:** SQLite 3 in WAL mode (Dual databases: main store + queue/cache)
+- **SSL:** Free automated TLS via Let's Encrypt Certbot
+- **Process Manager:** Supervisor for queue workers
+
+### 2. VPS System Setup
+
+```bash
+# Update and install system dependencies
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y nginx curl git unzip sqlite3 libsqlite3-dev supervisor certbot python3-certbot-nginx
+
+# Install PHP 8.3 repository & extensions
+sudo add-apt-repository ppa:ondrej/php -y
+sudo apt update
+sudo apt install -y php8.3-fpm php8.3-cli php8.3-sqlite3 php8.3-curl php8.3-mbstring \
+    php8.3-xml php8.3-zip php8.3-intl php8.3-bcmath php8.3-gd
+
+# Verify SQLite FTS5 extension is available
+php -r "new PDO('sqlite::memory:')->query('CREATE VIRTUAL TABLE t USING fts5(x);'); echo 'FTS5 OK' . PHP_EOL;"
+```
+
+### 3. Directory Layout & Shared Symlinks
+
+The production server uses a zero-downtime release directory structure:
+
+```text
+/var/www/soni-perfume/
+├── current -> /var/www/soni-perfume/releases/20261011120000
+├── releases/
+│   ├── 20261011110000/
+│   └── 20261011120000/
+└── shared/
+    ├── .env
+    ├── backups/
+    ├── database/
+    │   ├── database.sqlite
+    │   ├── database.sqlite-wal
+    │   ├── database.sqlite-shm
+    │   ├── queue.sqlite
+    │   ├── queue.sqlite-wal
+    │   └── queue.sqlite-shm
+    └── storage/
+        ├── app/public/
+        ├── framework/
+        └── logs/
+```
+
+### 4. SQLite Permissions & Web Root Isolation
+
+To protect store databases from web exposure and corruption:
+1. Databases are kept in `/var/www/soni-perfume/shared/database/`, strictly outside the Nginx document root (`/var/www/soni-perfume/current/public`).
+2. Nginx explicitly denies all requests targeting `.sqlite`, `.db`, `.wal`, `.shm`, `.bak`, and `.env` files with HTTP 404.
+3. Database permissions:
+   ```bash
+   sudo chown -R www-data:www-data /var/www/soni-perfume/shared
+   sudo chmod 750 /var/www/soni-perfume/shared/database
+   sudo chmod 640 /var/www/soni-perfume/shared/database/*.sqlite*
+   ```
+
+### 5. Automated Zero-Downtime Deployment
+
+Execute the deployment script located in `deploy/deploy.sh`:
+
+```bash
+# From VPS server
+chmod +x /var/www/soni-perfume/current/deploy/deploy.sh
+./deploy/deploy.sh
+```
+
+The script:
+1. Clones the latest release from GitHub into a timestamped directory.
+2. Symlinks the persistent `.env`, `database/`, and `storage/` directories.
+3. Installs optimized Composer dependencies without dev packages.
+4. Builds frontend assets with Vite.
+5. Runs `php artisan migrate --force`.
+6. Primes configuration, routes, views, icons, and Filament caches.
+7. Atomically switches the `current` symlink.
+8. Restarts the queue worker and reloads PHP-FPM with zero downtime.
+9. Retains the last 5 releases and prunes older ones.
+
+### 6. Nginx & Supervisor Setup
+
+- Copy `deploy/nginx.conf` to `/etc/nginx/sites-available/soni-perfume` and symlink to `/etc/nginx/sites-enabled/`.
+- Copy `deploy/supervisor.conf` to `/etc/supervisor/conf.d/soni-queue-worker.conf`.
+- Start the supervisor queue workers:
+  ```bash
+  sudo supervisorctl reread
+  sudo supervisorctl update
+  sudo supervisorctl start soni-queue-worker:*
+  ```
+
+### 7. Scheduled Tasks & Cron
+
+Add the Laravel scheduler to the `www-data` user crontab (`sudo crontab -u www-data -e`):
+
+```cron
+* * * * * cd /var/www/soni-perfume/current && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Scheduled jobs include:
+- `db:optimize-sqlite`: Daily at 02:00 (SQLite query planner stats update)
+- `db:backup`: Daily at 02:30 (WAL-safe VACUUM INTO snapshot, gzip compression, 14-day retention, media tar.gz)
+- `sitemap:generate`: Daily at 03:00 (Catalog sitemap refresh)
+- `db:maintenance-sqlite`: Weekly on Sundays at 03:30 (`PRAGMA integrity_check` & `PRAGMA wal_checkpoint(TRUNCATE)`)
+
+---
+
+## Backup & Disaster Recovery
+
+### 1. Running Backups
+
+Perform an on-demand, WAL-safe atomic backup at any time:
+
+```bash
+php artisan db:backup
+```
+
+Options:
+- `--days=14`: Retain backups newer than 14 days (default: 14).
+- `--no-media`: Exclude public media attachments.
+- `--destination=/path/to/backups`: Custom backup directory.
+
+Backups are saved to `storage/app/backups/`:
+- `sqlite_YYYY-MM-DD_HHMMSS.sqlite.gz`: Main database snapshot
+- `queue_db_YYYY-MM-DD_HHMMSS.sqlite.gz`: Queue and cache database snapshot
+- `media_YYYY-MM-DD_HHMMSS.tar.gz`: Media archive
+
+### 2. Restoring a Database
+
+To restore from a backup:
+
+```bash
+# Interactive selection from available backups:
+php artisan db:restore
+
+# Direct file restore with pre-validation:
+php artisan db:restore storage/app/backups/sqlite_2026-10-11_034305.sqlite.gz --force
+```
+
+**Restoration Safety Features:**
+1. Decompresses into a temporary file and runs `PRAGMA integrity_check;` before touching the active database.
+2. Backs up the current database to `database.sqlite.pre_restore.bak`.
+3. Purges active PDO connections to release locks.
+4. Replaces the file and deletes stale `-wal` and `-shm` index files to prevent journal corruption.
+5. Reconnects and reapplies WAL mode (`PRAGMA journal_mode = wal;`).
+
+---
+
+## Security Hardening & Rate Limits
+
+1. **Security Headers Middleware:**
+   - `X-Content-Type-Options: nosniff`
+   - `X-Frame-Options: SAMEORIGIN`
+   - `Referrer-Policy: strict-origin-when-cross-origin`
+   - `Permissions-Policy: camera=(), microphone=(), geolocation=()`
+   - `Strict-Transport-Security: max-age=31536000; includeSubDomains` (enforced over HTTPS)
+   - Strict `Content-Security-Policy` permitting self-hosted assets, Google Fonts, Plausible, and Telegram API.
+2. **Rate Limiting:**
+   - Checkout: Max 5 orders per hour per IP + route throttle `15,1`
+   - Contact inquiries: Max 5 messages per hour per IP + route throttle `10,1`
+   - Search suggestions: Route throttle `60,1`
+   - Newsletter subscriptions: Max 10 attempts per minute + route throttle `10,1`
+3. **Bot Token Redaction:**
+   - Any log output or exception in `TelegramService` automatically masks sensitive bot credentials (`bot[REDACTED_BOT_TOKEN]`).
+4. **Rich Text Input Sanitization:**
+   - `Page` model automatically strips `<script>`, `<iframe>`, inline JavaScript event handlers (`onclick`, `onerror`, etc.), and dangerous URI protocols (`javascript:`) before storing rich content.
+5. **Filament Admin Authorization:**
+   - Customer login and registration are removed; admin routes (`/admin`) require authenticated administrative credentials.
+
 
 

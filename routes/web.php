@@ -15,7 +15,9 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::post('/claim-welcome-offer', [HomeController::class, 'claimWelcomeOffer'])->name('welcome-offer.claim');
 
 // Newsletter subscription
-Route::post('/subscribers', [SubscriberController::class, 'store'])->name('subscribers.store');
+Route::post('/subscribers', [SubscriberController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('subscribers.store');
 
 // Shop & Catalog
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
@@ -26,7 +28,9 @@ Route::get('/product/{slug}', [ShopController::class, 'show'])->name('product.sh
 
 // Search & Live Suggestions
 Route::get('/search', [ShopController::class, 'index'])->name('search');
-Route::get('/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
+Route::get('/search/suggestions', [SearchController::class, 'suggestions'])
+    ->middleware('throttle:60,1')
+    ->name('search.suggestions');
 
 // Cart
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -37,7 +41,9 @@ Route::delete('/cart', [CartController::class, 'clear'])->name('cart.clear');
 
 // Guest Checkout & Place Order
 Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
-Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
+Route::post('/checkout', [CheckoutController::class, 'store'])
+    ->middleware('throttle:15,1')
+    ->name('checkout.store');
 
 // Order Confirmation (Thank-you page)
 Route::get('/order/{order_number}/thank-you', [CheckoutController::class, 'thankYou'])->name('order.thank-you');
@@ -54,7 +60,9 @@ Route::get('/gifts', [\App\Http\Controllers\GiftGuideController::class, 'index']
 // About & Content Pages
 Route::get('/about', [\App\Http\Controllers\PageController::class, 'about'])->name('about');
 Route::get('/contact', [\App\Http\Controllers\PageController::class, 'contact'])->name('contact');
-Route::post('/contact', [\App\Http\Controllers\PageController::class, 'submitContact'])->name('contact.submit');
+Route::post('/contact', [\App\Http\Controllers\PageController::class, 'submitContact'])
+    ->middleware('throttle:10,1')
+    ->name('contact.submit');
 Route::get('/delivery-returns', fn () => app(\App\Http\Controllers\PageController::class)->show('delivery-returns'))->name('delivery-returns');
 Route::get('/privacy', fn () => app(\App\Http\Controllers\PageController::class)->show('privacy'))->name('privacy');
 Route::get('/terms', fn () => app(\App\Http\Controllers\PageController::class)->show('terms'))->name('terms');

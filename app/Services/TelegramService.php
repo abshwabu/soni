@@ -76,6 +76,18 @@ class TelegramService
     }
 
     /**
+     * Redact sensitive credentials such as bot token from log messages.
+     */
+    public function sanitizeLog(string $message): string
+    {
+        if (! empty($this->botToken)) {
+            $message = str_replace($this->botToken, '[REDACTED_BOT_TOKEN]', $message);
+        }
+
+        return (string) preg_replace('/bot[0-9]+:[a-zA-Z0-9_\-]+/', 'bot[REDACTED_BOT_TOKEN]', $message);
+    }
+
+    /**
      * Send a text message via Telegram Bot API.
      */
     public function sendMessage(
@@ -107,10 +119,10 @@ class TelegramService
                 return $response->json();
             }
 
-            Log::error('Telegram sendMessage failed: ' . $response->body(), ['payload' => $payload]);
+            Log::error('Telegram sendMessage failed: ' . $this->sanitizeLog($response->body()), ['payload' => $payload]);
             return null;
         } catch (\Throwable $e) {
-            Log::error('Telegram sendMessage exception: ' . $e->getMessage());
+            Log::error('Telegram sendMessage exception: ' . $this->sanitizeLog($e->getMessage()));
             return null;
         }
     }
@@ -149,10 +161,10 @@ class TelegramService
                 return $response->json();
             }
 
-            Log::error('Telegram editMessageText failed: ' . $response->body(), ['payload' => $payload]);
+            Log::error('Telegram editMessageText failed: ' . $this->sanitizeLog($response->body()), ['payload' => $payload]);
             return null;
         } catch (\Throwable $e) {
-            Log::error('Telegram editMessageText exception: ' . $e->getMessage());
+            Log::error('Telegram editMessageText exception: ' . $this->sanitizeLog($e->getMessage()));
             return null;
         }
     }
@@ -179,7 +191,7 @@ class TelegramService
             $response = Http::timeout(10)->post("{$this->getApiBaseUrl()}/editMessageReplyMarkup", $payload);
             return $response->successful() ? $response->json() : null;
         } catch (\Throwable $e) {
-            Log::error('Telegram editMessageReplyMarkup exception: ' . $e->getMessage());
+            Log::error('Telegram editMessageReplyMarkup exception: ' . $this->sanitizeLog($e->getMessage()));
             return null;
         }
     }
@@ -209,7 +221,7 @@ class TelegramService
             $response = Http::timeout(10)->post("{$this->getApiBaseUrl()}/answerCallbackQuery", $payload);
             return $response->successful();
         } catch (\Throwable $e) {
-            Log::error('Telegram answerCallbackQuery exception: ' . $e->getMessage());
+            Log::error('Telegram answerCallbackQuery exception: ' . $this->sanitizeLog($e->getMessage()));
             return false;
         }
     }
@@ -237,7 +249,7 @@ class TelegramService
             $response = Http::timeout(15)->post("{$this->getApiBaseUrl()}/setWebhook", $payload);
             return $response->json();
         } catch (\Throwable $e) {
-            Log::error('Telegram setWebhook exception: ' . $e->getMessage());
+            Log::error('Telegram setWebhook exception: ' . $this->sanitizeLog($e->getMessage()));
             return null;
         }
     }
@@ -255,7 +267,7 @@ class TelegramService
             $response = Http::timeout(10)->post("{$this->getApiBaseUrl()}/deleteWebhook");
             return $response->successful();
         } catch (\Throwable $e) {
-            Log::error('Telegram deleteWebhook exception: ' . $e->getMessage());
+            Log::error('Telegram deleteWebhook exception: ' . $this->sanitizeLog($e->getMessage()));
             return false;
         }
     }
@@ -273,7 +285,7 @@ class TelegramService
             $response = Http::timeout(10)->get("{$this->getApiBaseUrl()}/getWebhookInfo");
             return $response->successful() ? $response->json() : null;
         } catch (\Throwable $e) {
-            Log::error('Telegram getWebhookInfo exception: ' . $e->getMessage());
+            Log::error('Telegram getWebhookInfo exception: ' . $this->sanitizeLog($e->getMessage()));
             return null;
         }
     }

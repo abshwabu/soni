@@ -7,6 +7,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+// SQLite Maintenance and Query Planner Optimization
 Artisan::command('db:optimize-sqlite', function () {
     $this->info('Running PRAGMA optimize on SQLite databases...');
     try {
@@ -18,6 +19,10 @@ Artisan::command('db:optimize-sqlite', function () {
     }
 })->purpose('Run SQLite PRAGMA optimize to update query planner statistics');
 
+// Schedule Scheduled Tasks
 \Illuminate\Support\Facades\Schedule::command('db:optimize-sqlite')->dailyAt('02:00');
+\Illuminate\Support\Facades\Schedule::command('db:backup')->dailyAt('02:30');
 \Illuminate\Support\Facades\Schedule::command('sitemap:generate')->dailyAt('03:00');
+\Illuminate\Support\Facades\Schedule::command('db:maintenance-sqlite')->weeklyOn(0, '03:30');
+
 
