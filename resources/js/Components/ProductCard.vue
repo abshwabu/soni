@@ -200,32 +200,6 @@ const executeAddToCart = (variantId) => {
                     {{ typeof product.concentration === 'object' ? product.concentration.value : product.concentration }}
                 </span>
             </div>
-
-            <!-- Quick Add Overlay on Desktop Hover -->
-            <div class="absolute inset-x-2 bottom-2 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 hidden sm:block">
-                <button
-                    type="button"
-                    :disabled="isOutOfStock || isAdding"
-                    class="w-full py-2.5 px-3 bg-brand-charcoal/90 hover:bg-black text-brand-bg text-xs uppercase tracking-widest font-sans font-medium rounded-sm backdrop-blur-sm transition-colors duration-200 shadow-md flex items-center justify-center gap-2 disabled:bg-neutral-400 disabled:cursor-not-allowed"
-                    @click.prevent="handleQuickAdd"
-                >
-                    <svg
-                        v-if="!isAdding"
-                        class="w-3.5 h-3.5 text-brand-gold"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M12 4.5v15m7.5-7.5h-15"
-                        />
-                    </svg>
-                    <span>{{ isOutOfStock ? ($i18n?.locale === 'am' ? 'አልቋል' : 'Sold Out') : hasMultipleVariants ? ($i18n?.locale === 'am' ? 'መጠን ይምረጡ' : 'Select Size') : ($i18n?.locale === 'am' ? 'ወደ ቦርሳ ጨምር' : 'Quick Add') }}</span>
-                </button>
-            </div>
         </div>
 
         <!-- Product Details -->
@@ -255,10 +229,11 @@ const executeAddToCart = (variantId) => {
                 </p>
             </div>
 
-            <!-- Price & Mobile Action -->
-            <div class="pt-2 border-t border-brand-border/40 flex items-center justify-between gap-2">
-                <div class="flex items-baseline gap-2 truncate">
-                    <span class="text-xs sm:text-sm font-semibold font-sans text-brand-charcoal tracking-wide">
+            <!-- Price & Action Section -->
+            <div class="pt-2 border-t border-brand-border/40 flex flex-col gap-2">
+                <!-- Dedicated Price Row (always visible and untruncated) -->
+                <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 min-w-0">
+                    <span class="text-xs sm:text-sm font-bold font-sans text-brand-charcoal tracking-wide">
                         {{ displayPrice }}
                     </span>
                     <span
@@ -269,20 +244,21 @@ const executeAddToCart = (variantId) => {
                     </span>
                 </div>
 
-                <!-- Mobile Quick Add Icon Button -->
+                <!-- Always-Visible Add to Bag Button for Desktop and Mobile -->
                 <button
                     type="button"
                     :disabled="isOutOfStock || isAdding"
-                    class="sm:hidden p-2 text-brand-charcoal hover:text-brand-gold active:bg-brand-surface-warm rounded-sm transition-colors border border-brand-border disabled:opacity-40"
-                    aria-label="Add to bag"
+                    class="w-full py-2 sm:py-2.5 px-3 bg-brand-charcoal hover:bg-black active:bg-neutral-900 text-brand-bg text-[11px] sm:text-xs uppercase tracking-widest font-sans font-medium rounded-sm transition-all duration-150 shadow-xs flex items-center justify-center gap-1.5 disabled:bg-neutral-300 disabled:text-neutral-500 disabled:cursor-not-allowed group/btn"
+                    :aria-label="isOutOfStock ? 'Sold Out' : (hasMultipleVariants ? 'Select Size' : 'Add to Bag')"
                     @click.prevent="handleQuickAdd"
                 >
                     <svg
-                        class="w-4 h-4"
+                        v-if="!isAdding && !isOutOfStock"
+                        class="w-3.5 h-3.5 text-brand-gold shrink-0 transition-transform duration-150 group-hover/btn:scale-110"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
-                        stroke-width="1.6"
+                        stroke-width="1.8"
                     >
                         <path
                             stroke-linecap="round"
@@ -290,6 +266,29 @@ const executeAddToCart = (variantId) => {
                             d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
                         />
                     </svg>
+                    <svg
+                        v-if="isAdding"
+                        class="w-3.5 h-3.5 animate-spin text-brand-gold shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            stroke-width="4"
+                        />
+                        <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                    </svg>
+                    <span class="truncate">
+                        {{ isOutOfStock ? ($i18n?.locale === 'am' ? 'አልቋል' : 'Sold Out') : hasMultipleVariants ? ($i18n?.locale === 'am' ? 'መጠን ይምረጡ' : 'Select Size') : ($i18n?.locale === 'am' ? 'ወደ ቦርሳ ጨምር' : 'Add to Bag') }}
+                    </span>
                 </button>
             </div>
         </div>

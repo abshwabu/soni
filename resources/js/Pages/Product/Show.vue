@@ -953,7 +953,7 @@ const jsonLdSchema = computed(() => {
                         <p class="font-serif text-xs font-semibold text-brand-charcoal truncate">
                             {{ product.name }}
                         </p>
-                        <p class="text-xs text-brand-gold font-bold">
+                        <p class="text-xs sm:text-sm text-brand-charcoal font-bold">
                             ETB {{ Number(currentPrice).toLocaleString() }}
                             <span
                                 v-if="selectedVariant"
