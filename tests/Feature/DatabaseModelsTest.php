@@ -25,7 +25,7 @@ class DatabaseModelsTest extends TestCase
         $this->assertGreaterThanOrEqual(60, ProductVariant::count());
         $this->assertEquals(4, \App\Models\Banner::count());
         $this->assertEquals(6, \App\Models\Testimonial::count());
-        $this->assertEquals(11, Setting::count());
+        $this->assertEquals(13, Setting::count());
     }
 
     public function test_money_accessors_format_properly_in_etb(): void

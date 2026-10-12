@@ -17,6 +17,8 @@ class SettingSeeder extends Seeder
             'free_delivery_threshold' => '5000',
             'welcome_discount_text' => 'Complimentary door-to-door express delivery across Addis Ababa on all orders above ETB 5,000!',
             'opening_hours' => 'Monday – Saturday: 9:00 AM – 8:00 PM | Sunday: 10:00 AM – 6:00 PM',
+            'store_phone' => '+251 91 123 4567',
+            'store_whatsapp' => '+251911234567',
             'instagram_url' => 'https://instagram.com/soniperfume',
             'tiktok_url' => 'https://tiktok.com/@soniperfume',
             'telegram_url' => 'https://t.me/soni_perfume_bot',

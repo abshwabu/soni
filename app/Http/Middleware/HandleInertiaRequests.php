@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Setting;
+use App\Support\ContactUrlHelper;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -53,6 +54,14 @@ class HandleInertiaRequests extends Middleware
             'store_address' => env('STORE_ADDRESS', 'Bole, Addis Ababa, Ethiopia'),
             'store_currency' => env('STORE_CURRENCY', 'ETB'),
         ], $dbSettings);
+
+        // Precalculate normalized redirect URLs for Telegram and WhatsApp
+        $settings['whatsapp_url'] = ContactUrlHelper::formatWhatsAppUrl(
+            $settings['store_whatsapp'] ?? $settings['store_phone'] ?? null
+        );
+        $settings['telegram_url'] = ContactUrlHelper::formatTelegramUrl(
+            $settings['telegram_url'] ?? null
+        );
 
         $cartService = app(\App\Services\CartService::class);
 

@@ -158,6 +158,8 @@ class FilamentAdminTest extends TestCase
                 'delivery_fee_addis' => '300',
                 'free_delivery_threshold' => '6000',
                 'welcome_discount_text' => 'Complimentary luxury gift wrapping on all orders!',
+                'store_whatsapp' => '+251 91 123 4567',
+                'telegram_url' => '@soniperfume_concierge',
             ])
             ->call('save')
             ->assertHasNoFormErrors();
@@ -165,6 +167,8 @@ class FilamentAdminTest extends TestCase
         $this->assertEquals('Soni Perfume Boutique', Setting::get('store_name'));
         $this->assertEquals('300', Setting::get('delivery_fee_addis'));
         $this->assertEquals('6000', Setting::get('free_delivery_threshold'));
+        $this->assertEquals('+251 91 123 4567', Setting::get('store_whatsapp'));
+        $this->assertEquals('@soniperfume_concierge', Setting::get('telegram_url'));
     }
 
     public function test_admin_can_view_printable_invoice(): void

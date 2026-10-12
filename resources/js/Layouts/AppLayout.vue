@@ -10,6 +10,7 @@ import Button from '../Components/Button.vue';
 import MiniCartDrawer from '../Components/MiniCartDrawer.vue';
 import { useToast } from '../Composables/useToast';
 import { setLocale } from '../i18n';
+import { buildWhatsAppUrl, buildTelegramUrl } from '../Utils/contact';
 
 const page = usePage();
 const { success, error } = useToast();
@@ -108,17 +109,14 @@ const selectBrand = (slug) => {
 };
 
 const whatsappUrl = computed(() => {
-    const raw = settings.value.store_whatsapp || settings.value.store_phone || '+251911234567';
-    let clean = raw.replace(/[^0-9]/g, '');
-    if (clean.startsWith('0')) {
-        clean = '251' + clean.slice(1);
-    }
-    const msg = encodeURIComponent('Hello Soni Perfume! I would like to inquire about your fragrance collection.');
-    return `https://wa.me/${clean}?text=${msg}`;
+    return buildWhatsAppUrl(
+        settings.value.whatsapp_url || settings.value.store_whatsapp || settings.value.store_phone,
+        'Hello Soni Perfume! I would like to inquire about your fragrance collection.'
+    );
 });
 
 const telegramUrl = computed(() => {
-    return settings.value.telegram_url || 'https://t.me/soniperfume_admin';
+    return buildTelegramUrl(settings.value.telegram_url);
 });
 
 const phoneUrl = computed(() => {

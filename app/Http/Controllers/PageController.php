@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Page;
 use App\Models\Setting;
 use App\Services\TelegramService;
+use App\Support\ContactUrlHelper;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -61,8 +62,10 @@ class PageController extends Controller
                 'address' => $settings['store_address'] ?? 'Bole Medhanialem, Addis Ababa, Ethiopia',
                 'phone' => $settings['store_phone'] ?? '+251 91 100 0000',
                 'altPhone' => $settings['store_alt_phone'] ?? '+251 92 200 0000',
-                'whatsapp' => $settings['store_whatsapp'] ?? '+251 91 100 0000',
-                'telegram' => $settings['store_telegram'] ?? 'https://t.me/soniperfume',
+                'whatsapp' => $settings['store_whatsapp'] ?? $settings['store_phone'] ?? '+251 91 100 0000',
+                'telegram' => $settings['telegram_url'] ?? $settings['store_telegram'] ?? 'https://t.me/soniperfume_admin',
+                'whatsapp_url' => ContactUrlHelper::formatWhatsAppUrl($settings['store_whatsapp'] ?? $settings['store_phone'] ?? '+251 91 100 0000'),
+                'telegram_url' => ContactUrlHelper::formatTelegramUrl($settings['telegram_url'] ?? $settings['store_telegram'] ?? 'soniperfume_admin'),
                 'email' => $settings['store_email'] ?? 'concierge@soniperfume.com',
                 'hours' => $settings['opening_hours'] ?? 'Mon–Sat: 9:00 AM – 8:00 PM | Sun: 10:00 AM – 6:00 PM',
                 'geo' => [

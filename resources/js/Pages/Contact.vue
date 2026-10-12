@@ -6,6 +6,7 @@ import SeoHead from '../Components/SeoHead.vue';
 import SectionHeading from '../Components/SectionHeading.vue';
 import Button from '../Components/Button.vue';
 import { useToast } from '../Composables/useToast';
+import { buildWhatsAppUrl, buildTelegramUrl } from '../Utils/contact';
 
 const props = defineProps({
     storeInfo: {
@@ -42,23 +43,15 @@ const submit = () => {
     });
 };
 
-const cleanPhone = computed(() => {
-    const raw = props.storeInfo.whatsapp || props.storeInfo.phone || '+251911000000';
-    let clean = raw.replace(/[^0-9]/g, '');
-    if (clean.startsWith('0')) clean = '251' + clean.slice(1);
-    return clean;
-});
-
 const whatsappLink = computed(() => {
-    const msg = encodeURIComponent('Hello Soni Perfume concierge, I would like to inquire about:');
-    return `https://wa.me/${cleanPhone.value}?text=${msg}`;
+    return buildWhatsAppUrl(
+        props.storeInfo.whatsapp_url || props.storeInfo.whatsapp || props.storeInfo.phone,
+        'Hello Soni Perfume concierge, I would like to inquire about:'
+    );
 });
 
 const telegramLink = computed(() => {
-    const tg = props.storeInfo.telegram;
-    if (tg && tg.startsWith('http')) return tg;
-    if (tg) return `https://t.me/${tg.replace('@', '')}`;
-    return 'https://t.me/soniperfume';
+    return buildTelegramUrl(props.storeInfo.telegram_url || props.storeInfo.telegram);
 });
 
 const googleMapEmbedUrl = computed(() => {

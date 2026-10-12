@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import AppLayout from '../Layouts/AppLayout.vue';
 import ProductCard from '../Components/ProductCard.vue';
@@ -12,6 +12,21 @@ import Rating from '../Components/Rating.vue';
 import AppImage from '../Components/AppImage.vue';
 import { useToast } from '../Composables/useToast';
 import { useAnalytics } from '../Composables/useAnalytics';
+import { buildWhatsAppUrl, buildTelegramUrl } from '../Utils/contact';
+
+const page = usePage();
+const settings = computed(() => page.props.settings || {});
+
+const whatsappChatUrl = computed(() => {
+    return buildWhatsAppUrl(
+        settings.value.whatsapp_url || settings.value.store_whatsapp || settings.value.store_phone,
+        'Hello Soni Perfume! I would like to visit your boutique or inquire about perfumes.'
+    );
+});
+
+const telegramChatUrl = computed(() => {
+    return buildTelegramUrl(settings.value.telegram_url);
+});
 
 const { trackEvent } = useAnalytics();
 
@@ -1494,23 +1509,34 @@ const jsonLdSchema = computed(() => {
                         </div>
 
                         <!-- Direct buttons -->
-                        <div class="pt-4 border-t border-brand-border/60 flex flex-col sm:flex-row gap-3">
+                        <div class="pt-4 border-t border-brand-border/60 grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <a
                                 :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent($page.props.settings?.store_address || 'Bole, Addis Ababa')}`"
                                 target="_blank"
                                 rel="noopener"
-                                class="flex-1 inline-flex items-center justify-center py-2.5 px-4 bg-brand-charcoal text-white text-xs uppercase tracking-widest font-medium rounded-sm hover:bg-black transition-colors"
+                                class="inline-flex items-center justify-center py-2.5 px-4 bg-brand-charcoal text-white text-xs uppercase tracking-widest font-medium rounded-sm hover:bg-black transition-colors"
                             >
                                 Get Directions →
                             </a>
 
                             <a
-                                :href="`https://wa.me/${($page.props.settings?.store_whatsapp || '+251911234567').replace(/[^0-9]/g, '')}`"
+                                :href="whatsappChatUrl"
                                 target="_blank"
                                 rel="noopener"
-                                class="flex-1 inline-flex items-center justify-center py-2.5 px-4 bg-emerald-700 text-white text-xs uppercase tracking-widest font-medium rounded-sm hover:bg-emerald-800 transition-colors"
+                                class="inline-flex items-center justify-center gap-1.5 py-2.5 px-4 bg-emerald-700 text-white text-xs uppercase tracking-widest font-medium rounded-sm hover:bg-emerald-800 transition-colors"
                             >
-                                WhatsApp Chat
+                                <span>💬</span>
+                                <span>WhatsApp Chat</span>
+                            </a>
+
+                            <a
+                                :href="telegramChatUrl"
+                                target="_blank"
+                                rel="noopener"
+                                class="inline-flex items-center justify-center gap-1.5 py-2.5 px-4 bg-sky-600 text-white text-xs uppercase tracking-widest font-medium rounded-sm hover:bg-sky-700 transition-colors"
+                            >
+                                <span>✈️</span>
+                                <span>Telegram Chat</span>
                             </a>
                         </div>
                     </div>

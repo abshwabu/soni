@@ -10,6 +10,7 @@ import Badge from '../../Components/Badge.vue';
 import Button from '../../Components/Button.vue';
 import { useToast } from '../../Composables/useToast';
 import { useAnalytics } from '../../Composables/useAnalytics';
+import { buildWhatsAppUrl, buildTelegramUrl } from '../../Utils/contact';
 
 const { trackEvent } = useAnalytics();
 
@@ -138,11 +139,6 @@ const addToCart = () => {
 
 // WhatsApp Order URL with prefilled details
 const whatsappOrderUrl = computed(() => {
-    const raw = settings.value.store_whatsapp || settings.value.store_phone || '+251911234567';
-    let clean = raw.replace(/[^0-9]/g, '');
-    if (clean.startsWith('0')) {
-        clean = '251' + clean.slice(1);
-    }
     const size = selectedVariant.value ? `${selectedVariant.value.size_ml}ml` : '';
     const priceText = `ETB ${Number(currentPrice.value).toLocaleString()}`;
     const url = typeof window !== 'undefined' ? window.location.href : '';
@@ -154,15 +150,17 @@ const whatsappOrderUrl = computed(() => {
 • Quantity: ${quantity.value}
 • Link: ${url}`;
 
-    return `https://wa.me/${clean}?text=${encodeURIComponent(text)}`;
+    return buildWhatsAppUrl(
+        settings.value.whatsapp_url || settings.value.store_whatsapp || settings.value.store_phone,
+        text
+    );
 });
 
 // Telegram Order URL
 const telegramOrderUrl = computed(() => {
-    const base = settings.value.telegram_url || 'https://t.me/soniperfume_admin';
     const size = selectedVariant.value ? `${selectedVariant.value.size_ml}ml` : '';
     const text = `Hello! I would like to order ${props.product.name} (${size}) for ETB ${Number(currentPrice.value).toLocaleString()}`;
-    return `${base}?text=${encodeURIComponent(text)}`;
+    return buildTelegramUrl(settings.value.telegram_url, text);
 });
 
 // Breadcrumbs
