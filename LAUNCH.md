@@ -49,12 +49,15 @@ This document details the step-by-step checklist required before and immediately
   - [ ] `TELEGRAM_BOT_TOKEN` set in `.env`
   - [ ] `TELEGRAM_ADMIN_CHAT_ID` set to store manager's Telegram user ID or group ID
   - [ ] `TELEGRAM_WEBHOOK_SECRET` generated (e.g. 32-character random string)
+  - [ ] If running on a server without background queue workers, set `TELEGRAM_SYNC_DISPATCH=true` in `.env`
 - [ ] **Artisan Diagnostics**:
-  - [ ] Run `php artisan telegram:test` to confirm delivery of test message to admin chat
+  - [ ] Run `php artisan telegram:test --diagnose` to confirm bot authentication, queue health, and webhook status
+  - [ ] Run `php artisan telegram:test --order` to verify full formatted order notification with interactive buttons
   - [ ] Run `php artisan telegram:set-webhook` to bind webhook to `https://soniperfume.com/telegram/webhook/{secret}`
   - [ ] Confirm Telegram webhook response: `"Webhook was set"`
-- [ ] **Queue Worker**:
+- [ ] **Queue Worker (if using background queues)**:
   - [ ] Supervisor configured and active (`supervisorctl status soni-queue-worker:*`)
+  - [ ] Supervisor executes `php artisan queue:work queue_db --sleep=3 --tries=3`
   - [ ] Queue failure alert: verified that job failures dispatch an alert to Telegram
 
 ---

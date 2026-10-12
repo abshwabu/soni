@@ -28,6 +28,7 @@ class TelegramIntegrationTest extends TestCase
         Config::set('services.telegram.bot_token', '123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ');
         Config::set('services.telegram.admin_chat_id', '987654321,555444333');
         Config::set('services.telegram.webhook_secret', 'test-webhook-secret-123');
+        Config::set('app.url', 'https://soniperfume.com');
 
         Cache::flush();
     }
@@ -37,7 +38,7 @@ class TelegramIntegrationTest extends TestCase
         $variant = ProductVariant::first();
 
         $order = Order::create([
-            'order_number' => 'SP-20261011-' . rand(1000, 9999),
+            'order_number' => 'SP-20261011-' . uniqid() . '-' . rand(1000, 9999),
             'customer_name' => 'Abebe Bikila',
             'phone' => '+251911223344',
             'alt_phone' => '+251922334455',
@@ -102,12 +103,9 @@ class TelegramIntegrationTest extends TestCase
         $this->assertEquals("order:{$order->id}:completed", $rows[1][0]['callback_data']);
         $this->assertEquals("order:{$order->id}:cancelled", $rows[1][1]['callback_data']);
 
-        // Row 3: Call & WhatsApp
-        $this->assertStringStartsWith('tel:', $rows[2][0]['url']);
-        $this->assertStringContainsString('wa.me/251911223344', $rows[2][1]['url']);
-
-        // Row 4: Open in Admin
-        $this->assertStringContainsString("/admin/orders/{$order->id}", $rows[3][0]['url']);
+        // Row 3: WhatsApp & Open in Admin
+        $this->assertStringContainsString('wa.me/251911223344', $rows[2][0]['url']);
+        $this->assertStringContainsString("/admin/orders/{$order->id}", $rows[2][1]['url']);
     }
 
     public function test_send_order_notification_sends_http_and_updates_order(): void
@@ -380,8 +378,8 @@ class TelegramIntegrationTest extends TestCase
             ->assertSuccessful();
 
         Http::assertSent(function ($request) {
-            return $request['chat_id'] === '987654321'
-                && str_contains($request['text'], 'Telegram Bot Test');
+            return ($request['chat_id'] ?? null) === '987654321'
+                && str_contains($request['text'] ?? '', 'Telegram Bot Test');
         });
     }
 

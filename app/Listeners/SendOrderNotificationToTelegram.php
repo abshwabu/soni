@@ -12,6 +12,10 @@ class SendOrderNotificationToTelegram
      */
     public function handle(OrderPlaced $event): void
     {
-        SendOrderToTelegram::dispatch($event->order);
+        if (config('services.telegram.sync_dispatch', false) || config('queue.default') === 'sync') {
+            SendOrderToTelegram::dispatchSync($event->order);
+        } else {
+            SendOrderToTelegram::dispatch($event->order);
+        }
     }
 }

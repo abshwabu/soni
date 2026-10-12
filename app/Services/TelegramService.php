@@ -237,6 +237,24 @@ class TelegramService
     }
 
     /**
+     * Test the Telegram bot token and retrieve bot metadata.
+     */
+    public function getMe(): ?array
+    {
+        if (empty($this->botToken)) {
+            return null;
+        }
+
+        try {
+            $response = Http::timeout(10)->get("{$this->getApiBaseUrl()}/getMe");
+            return $response->successful() ? $response->json() : null;
+        } catch (\Throwable $e) {
+            Log::error('Telegram getMe exception: ' . $this->sanitizeLog($e->getMessage()));
+            return null;
+        }
+    }
+
+    /**
      * Register a webhook endpoint with Telegram.
      */
     public function setWebhook(string $url, ?string $secretToken = null): ?array
@@ -387,11 +405,22 @@ TEXT;
             $cleanPhone = '251' . substr($cleanPhone, 1);
         }
 
-        $telUrl = "tel:{$order->phone}";
         $whatsappMsg = urlencode("Hello {$order->customer_name}, regarding your Soni Perfume order #{$order->order_number}:");
         $whatsappUrl = "https://wa.me/{$cleanPhone}?text={$whatsappMsg}";
 
-        $adminUrl = rtrim(config('app.url', 'http://localhost'), '/') . "/admin/orders/{$order->id}";
+        $appUrl = config('app.url', 'http://localhost');
+        $isAdminUrlPublic = (str_starts_with($appUrl, 'https://') || str_starts_with($appUrl, 'http://'))
+            && ! str_contains($appUrl, 'localhost')
+            && ! str_contains($appUrl, '127.0.0.1');
+
+        $row3 = [
+            ['text' => '💬 WhatsApp', 'url' => $whatsappUrl],
+        ];
+
+        if ($isAdminUrlPublic) {
+            $adminUrl = rtrim($appUrl, '/') . "/admin/orders/{$order->id}";
+            $row3[] = ['text' => '🔎 Open in Admin', 'url' => $adminUrl];
+        }
 
         return [
             'inline_keyboard' => [
@@ -403,13 +432,7 @@ TEXT;
                     ['text' => '✔️ Completed', 'callback_data' => "order:{$order->id}:completed"],
                     ['text' => '❌ Cancel', 'callback_data' => "order:{$order->id}:cancelled"],
                 ],
-                [
-                    ['text' => '📞 Call customer', 'url' => $telUrl],
-                    ['text' => '💬 WhatsApp', 'url' => $whatsappUrl],
-                ],
-                [
-                    ['text' => '🔎 Open in Admin', 'url' => $adminUrl],
-                ],
+                $row3,
             ],
         ];
     }

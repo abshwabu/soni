@@ -2,37 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>http://localhost:8000/</loc>
-    <lastmod>2026-10-12T12:41:59+00:00</lastmod>
+    <lastmod>2026-10-12T13:35:14+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>http://localhost:8000/shop</loc>
-    <lastmod>2026-10-12T12:41:59+00:00</lastmod>
+    <lastmod>2026-10-12T13:35:14+00:00</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>http://localhost:8000/gifts</loc>
-    <lastmod>2026-10-12T12:41:59+00:00</lastmod>
+    <lastmod>2026-10-12T13:35:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>http://localhost:8000/brands</loc>
-    <lastmod>2026-10-12T12:41:59+00:00</lastmod>
+    <lastmod>2026-10-12T13:35:14+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>http://localhost:8000/about</loc>
-    <lastmod>2026-10-12T12:41:59+00:00</lastmod>
+    <lastmod>2026-10-12T13:35:14+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>http://localhost:8000/contact</loc>
-    <lastmod>2026-10-12T12:41:59+00:00</lastmod>
+    <lastmod>2026-10-12T13:35:14+00:00</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -121,6 +121,12 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>http://localhost:8000/p/vip-fragrance-club-10</loc>
+    <lastmod>2026-10-12T12:42:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>http://localhost:8000/category/men</loc>
     <lastmod>2026-10-11T03:49:13+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -205,8 +211,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost:8000/product/dior-sauvage-edp-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent</loc>
-    <lastmod>2026-10-12T12:40:59+00:00</lastmod>
+    <loc>http://localhost:8000/product/dior-sauvage-edp-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent-new-scent</loc>
+    <lastmod>2026-10-12T12:42:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
