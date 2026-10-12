@@ -133,37 +133,176 @@ const selectQuizAnswer = (field, value) => {
 };
 
 const calculateQuizResults = () => {
-    const pool = props.quizProducts.length > 0 ? props.quizProducts : props.bestsellers;
-    const { gender, family, budget } = quizAnswers.value;
+    const pool = (props.quizProducts && props.quizProducts.length > 0)
+        ? props.quizProducts
+        : (props.bestsellers || []);
 
-    // Score products based on user preferences
+    if (!pool.length) {
+        quizResults.value = [];
+        quizCompleted.value = true;
+        return;
+    }
+
+    const { gender, occasion, family, budget } = quizAnswers.value;
+
+    // Score products based on user preferences with high fidelity
     const scored = pool.map((product) => {
         let score = 50;
 
-        // Gender matching
-        const productGender = (typeof product.gender === 'object' ? product.gender?.value : product.gender)?.toLowerCase();
-        if (gender === 'men' && (productGender === 'men' || productGender === 'unisex')) score += 30;
-        else if (gender === 'women' && (productGender === 'women' || productGender === 'unisex')) score += 30;
-        else if (gender === 'unisex') score += 20;
+        // Extract and normalize product attributes
+        const productGender = (typeof product.gender === 'object' ? product.gender?.value : product.gender)?.toLowerCase() || '';
+        const productFamily = (typeof product.scent_family === 'object' ? product.scent_family?.value : product.scent_family)?.toLowerCase() || '';
+        const productConcentration = (typeof product.concentration === 'object' ? product.concentration?.value : product.concentration)?.toUpperCase() || '';
+        const price = Number(product.price_from || product.variants?.[0]?.price || 0);
 
-        // Family matching
-        const productFamily = (typeof product.scent_family === 'object' ? product.scent_family?.value : product.scent_family)?.toLowerCase();
-        if (family !== 'all' && productFamily?.includes(family.toLowerCase())) {
-            score += 35;
+        // Combined notes & text blob for rich keyword matching
+        const notesText = [
+            product.name,
+            product.scent_family,
+            product.top_notes,
+            product.heart_notes,
+            product.base_notes,
+            product.short_description,
+            product.description,
+        ].filter(Boolean).join(' ').toLowerCase();
+
+        // -----------------------------------------------------------------
+        // 1. GENDER COMPATIBILITY (Strict Priority)
+        // -----------------------------------------------------------------
+        if (gender === 'men') {
+            if (productGender === 'men') {
+                score += 50;
+            } else if (productGender === 'unisex') {
+                score += 35;
+            } else if (productGender === 'women') {
+                score -= 150; // Harsh penalty: never recommend women-only perfumes for him
+            }
+        } else if (gender === 'women') {
+            if (productGender === 'women') {
+                score += 50;
+            } else if (productGender === 'unisex') {
+                score += 35;
+            } else if (productGender === 'men') {
+                score -= 150; // Harsh penalty: never recommend men-only colognes for her
+            }
+        } else if (gender === 'unisex') {
+            if (productGender === 'unisex') {
+                score += 50;
+            } else {
+                score += 15;
+            }
         }
 
-        // Budget matching
-        const price = product.price_from || product.variants?.[0]?.price || 0;
-        if (budget === 'under5k' && price < 5000) score += 25;
-        else if (budget === '5k-10k' && price >= 5000 && price <= 10000) score += 25;
-        else if (budget === 'above10k' && price > 10000) score += 25;
-        else if (budget === 'any') score += 15;
+        // -----------------------------------------------------------------
+        // 2. SCENT PROFILE / OLFACTORY FAMILY MATCHING
+        // -----------------------------------------------------------------
+        if (family === 'oriental') {
+            // "Royal Oud & Amber" — Oud, amber, incense, rich spices
+            if (productFamily === 'oriental') score += 45;
+            else if (productFamily === 'woody') score += 35;
+
+            const orientalKeywords = ['oud', 'amber', 'incense', 'spice', 'spicy', 'saffron', 'smoke', 'cardamom', 'cinnamon', 'leather', 'myrrh', 'oriental'];
+            const matchedNotes = orientalKeywords.filter((k) => notesText.includes(k)).length;
+            score += Math.min(matchedNotes * 5, 20);
+        } else if (family === 'fresh') {
+            // "Fresh Citrus & Bergamot" — Crisp lemon, Italian bergamot, sea breeze
+            if (productFamily === 'fresh' || productFamily === 'citrus') score += 45;
+
+            const freshKeywords = ['bergamot', 'citrus', 'lemon', 'marine', 'sea', 'aquatic', 'grapefruit', 'mint', 'mandarin', 'lime', 'calabrian', 'ambroxan', 'fresh'];
+            const matchedNotes = freshKeywords.filter((k) => notesText.includes(k)).length;
+            score += Math.min(matchedNotes * 5, 20);
+        } else if (family === 'floral') {
+            // "Sensual Florals & Rose" — Bulgarian rose, jasmine, white musk
+            if (productFamily === 'floral') score += 45;
+
+            const floralKeywords = ['rose', 'jasmine', 'floral', 'tuberose', 'iris', 'peony', 'orange blossom', 'neroli', 'violet', 'ylang', 'gardenia', 'lily', 'musk'];
+            const matchedNotes = floralKeywords.filter((k) => notesText.includes(k)).length;
+            score += Math.min(matchedNotes * 5, 20);
+        } else if (family === 'gourmand') {
+            // "Sweet Vanilla & Gourmand" — Bourbon vanilla, tonka bean, caramel
+            if (productFamily === 'gourmand') score += 45;
+
+            const gourmandKeywords = ['vanilla', 'tonka', 'caramel', 'sweet', 'cherry', 'praline', 'chocolate', 'cacao', 'coffee', 'almond', 'marshmallow', 'sugar', 'gourmand'];
+            const matchedNotes = gourmandKeywords.filter((k) => notesText.includes(k)).length;
+            score += Math.min(matchedNotes * 5, 20);
+        }
+
+        // -----------------------------------------------------------------
+        // 3. OCCASION MATCHING
+        // -----------------------------------------------------------------
+        if (occasion === 'daily') {
+            // Daily Signature & Office: Clean, balanced, versatile
+            if (productFamily === 'fresh' || productFamily === 'citrus') score += 25;
+            else if (productFamily === 'woody') score += 15;
+            else if (productFamily === 'floral') score += 10;
+
+            const dailyKeywords = ['clean', 'balanced', 'versatile', 'office', 'signature', 'bergamot', 'lavender', 'vetiver', 'cedarwood', 'fresh'];
+            if (dailyKeywords.some((k) => notesText.includes(k))) score += 10;
+        } else if (occasion === 'evening') {
+            // Evening & Romantic Nights: Warm, seductive, intimate, sillage
+            if (productFamily === 'oriental' || productFamily === 'gourmand') score += 25;
+            else if (productFamily === 'woody') score += 20;
+
+            if (productConcentration.includes('PARFUM') || productConcentration.includes('EDP')) score += 10;
+
+            const eveningKeywords = ['warm', 'seductive', 'intimate', 'night', 'sillage', 'vanilla', 'amber', 'tonka', 'leather', 'iris', 'spicy', 'cinnamon'];
+            if (eveningKeywords.some((k) => notesText.includes(k))) score += 10;
+        } else if (occasion === 'royal') {
+            // Weddings & Royal Celebrations: Opulent, long-lasting oriental oud & French extrait
+            if (productFamily === 'oriental' || productFamily === 'woody') score += 30;
+
+            if (productConcentration.includes('PARFUM') || productConcentration.includes('EXTRAIT')) score += 15;
+
+            const royalKeywords = ['oud', 'royal', 'opulent', 'saffron', 'amber', 'incense', 'rose', 'luxury', 'gold', 'prestige'];
+            if (royalKeywords.some((k) => notesText.includes(k))) score += 15;
+        } else if (occasion === 'casual') {
+            // Weekend & Sunny Outdoor: Citrus, aquatic, fresh
+            if (productFamily === 'fresh' || productFamily === 'citrus') score += 30;
+            else if (productFamily === 'floral') score += 15;
+
+            const casualKeywords = ['citrus', 'aquatic', 'sea', 'marine', 'lemon', 'fruit', 'sunny', 'outdoor', 'crisp', 'mint'];
+            if (casualKeywords.some((k) => notesText.includes(k))) score += 10;
+        }
+
+        // -----------------------------------------------------------------
+        // 4. BUDGET MATCHING
+        // -----------------------------------------------------------------
+        if (budget === 'under5k') {
+            if (price > 0 && price < 5000) score += 40;
+            else if (price >= 5000 && price <= 8000) score -= 25;
+            else if (price > 8000) score -= 100; // Do not recommend luxury bottles far over budget
+        } else if (budget === '5k-10k') {
+            if (price >= 5000 && price <= 10000) score += 40;
+            else if (price >= 3500 && price < 5000) score += 15;
+            else if (price > 10000 && price <= 15000) score += 10;
+            else if (price > 15000) score -= 60;
+            else if (price < 3500) score -= 30;
+        } else if (budget === 'above10k') {
+            if (price > 10000) score += 40;
+            else if (price >= 7000 && price <= 10000) score += 10;
+            else if (price < 5000) score -= 80; // User explicitly wanted high-end luxury / niche
+        } else if (budget === 'any') {
+            score += 20;
+        }
+
+        // -----------------------------------------------------------------
+        // 5. MERCHANDISING BONUSES
+        // -----------------------------------------------------------------
+        if (product.is_bestseller) score += 10;
+        if (product.is_featured) score += 5;
+        if (product.in_stock !== false) score += 15;
 
         return { product, score };
     });
 
+    // Sort products by descending score
     scored.sort((a, b) => b.score - a.score);
-    quizResults.value = scored.slice(0, 4).map((item) => item.product);
+
+    // Filter out items with heavily negative scores (gender/budget disqualification) unless pool is too small
+    const positiveMatches = scored.filter((item) => item.score > 0);
+    const source = positiveMatches.length >= 4 ? positiveMatches : scored;
+
+    quizResults.value = source.slice(0, 4).map((item) => item.product);
     quizCompleted.value = true;
 };
 
@@ -806,7 +945,17 @@ const jsonLdSchema = computed(() => {
                         class="mb-8"
                     >
                         <div class="flex items-center justify-between text-xs font-sans uppercase tracking-widest text-brand-gold-300 font-semibold mb-2">
-                            <span>Question {{ quizStep }} of 4</span>
+                            <div class="flex items-center gap-2">
+                                <button
+                                    v-if="quizStep > 1"
+                                    type="button"
+                                    class="text-white/60 hover:text-brand-gold text-[11px] normal-case tracking-normal transition-colors flex items-center gap-1 cursor-pointer"
+                                    @click="quizStep--"
+                                >
+                                    ← Back
+                                </button>
+                                <span>Question {{ quizStep }} of 4</span>
+                            </div>
                             <span>{{ quizStep * 25 }}%</span>
                         </div>
                         <div class="h-1 bg-white/10 rounded-full overflow-hidden">
@@ -1079,7 +1228,7 @@ const jsonLdSchema = computed(() => {
                         v-else-if="quizCompleted"
                         class="space-y-8 animate-fadeIn"
                     >
-                        <div class="text-center space-y-2">
+                        <div class="text-center space-y-3">
                             <span class="text-brand-gold text-xs uppercase tracking-widest font-semibold">
                                 ✓ Your Olfactory Profile Analysis Complete
                             </span>
@@ -1089,6 +1238,21 @@ const jsonLdSchema = computed(() => {
                             <p class="text-xs sm:text-sm text-white/70 font-sans font-light max-w-md mx-auto">
                                 Handpicked according to your preferences in scent family, personality, and investment.
                             </p>
+                            <!-- Selected Filters Summary Badges -->
+                            <div class="flex flex-wrap justify-center gap-2 pt-1 text-[11px] font-sans">
+                                <span class="px-3 py-1 rounded-full bg-white/10 text-white/90 border border-white/15">
+                                    {{ quizAnswers.gender === 'men' ? '🎩 For Him' : quizAnswers.gender === 'women' ? '🌸 For Her' : '✨ Unisex / Shared' }}
+                                </span>
+                                <span class="px-3 py-1 rounded-full bg-white/10 text-white/90 border border-white/15">
+                                    {{ quizAnswers.occasion === 'daily' ? '☀️ Daily Signature' : quizAnswers.occasion === 'evening' ? '🌙 Evening & Nights' : quizAnswers.occasion === 'royal' ? '👑 Royal Celebrations' : '🌿 Weekend Outdoor' }}
+                                </span>
+                                <span class="px-3 py-1 rounded-full bg-white/10 text-white/90 border border-white/15">
+                                    {{ quizAnswers.family === 'oriental' ? '🪵 Oud & Amber' : quizAnswers.family === 'fresh' ? '🍋 Fresh Citrus' : quizAnswers.family === 'floral' ? '🌹 Sensual Florals' : '🍨 Sweet Gourmand' }}
+                                </span>
+                                <span class="px-3 py-1 rounded-full bg-white/10 text-white/90 border border-white/15">
+                                    {{ quizAnswers.budget === 'under5k' ? '💰 Under ETB 5K' : quizAnswers.budget === '5k-10k' ? '💰 ETB 5K–10K' : quizAnswers.budget === 'above10k' ? '💎 Above ETB 10K' : '✨ Any Budget' }}
+                                </span>
+                            </div>
                         </div>
 
                         <!-- Results Products Grid -->

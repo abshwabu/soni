@@ -89,7 +89,6 @@ class HomeController extends Controller
             // Products pool for Scent Finder quiz matching
             $quizProducts = Product::active()
                 ->with(['brand', 'variants', 'media'])
-                ->take(30)
                 ->get();
 
             return [
